@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f7fb">
+  <title>① オイラー図 | 論理学ビジュアル辞書</title>
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body data-page="euler" data-root="../">
+  <main class="page">
+    <header class="site-header">
+      <a class="brand" href="../index.html">論理学ビジュアル辞書</a>
+      <p>図や用語を選ぶと、辞書の該当項目がハイライトされます。</p>
+    </header>
+    <nav class="site-nav" data-site-nav aria-label="章のナビゲーション"></nav>
+    <div class="layout">
+      <section class="chapter">
+        <h1>① オイラー図：S・M・Pの関係</h1>
+        <p class="hint">三段論法で使う主語項S・媒概念M・述語項Pを図で表します。S・M・Pの円やAEIOの形式を選んでみましょう。</p>
+        <div class="button-row" role="group" aria-label="AEIO命題">
+          <button class="choice" type="button" data-categorical="A" aria-pressed="true">A 全称肯定</button>
+          <button class="choice" type="button" data-categorical="E" aria-pressed="false">E 全称否定</button>
+          <button class="choice" type="button" data-categorical="I" aria-pressed="false">I 特称肯定</button>
+          <button class="choice" type="button" data-categorical="O" aria-pressed="false">O 特称否定</button>
+        </div>
+        <svg class="diagram" viewBox="0 0 540 330" role="group" aria-label="S・M・Pの三つの項の関係を示す模式図">
+          <rect x="3" y="3" width="534" height="324" rx="14" fill="#f8fafc"></rect>
+          <line class="term-line" x1="80" y1="272" x2="460" y2="272"></line>
+          <circle class="term-circle" cx="190" cy="145" r="95" fill="#ffb4a2" stroke="#d66a54" data-term-node="S" tabindex="0" role="button" aria-label="主語項S"></circle>
+          <circle class="term-circle" cx="350" cy="145" r="95" fill="#9bd8f5" stroke="#3689b4" data-term-node="P" tabindex="0" role="button" aria-label="述語項P"></circle>
+          <circle class="term-circle" cx="270" cy="145" r="72" fill="#c7b5f5" stroke="#7754b5" data-term-node="M" tabindex="0" role="button" aria-label="媒概念M"></circle>
+          <text class="region-label" x="138" y="150">S</text>
+          <text class="region-label" x="402" y="150">P</text>
+          <text class="region-label" x="270" y="150">M</text>
+          <g id="categorical-marker" transform="translate(138 145)" pointer-events="none">
+            <circle r="20" fill="#fff" stroke="#344054" stroke-width="2"></circle>
+            <text id="categorical-marker-text" x="0" y="8" text-anchor="middle" font-size="25" font-weight="700" fill="#263247">∅</text>
+          </g>
+          <text class="region-label" x="270" y="302" font-size="13">S・M・Pは項（term）の記号</text>
+        </svg>
+        <div class="card categorical-card">
+          <strong id="categorical-title">A：すべてのSはPである</strong>
+          <p class="hint categorical-description" id="categorical-description">全称肯定。Sに属するものはすべてPにも属します。Mは、二つの前提をつなぐ媒概念です。</p>
+        </div>
+        <footer class="site-footer">図は項の関係を示す模式図です。AEIOの正確な対当関係は第2章で確認できます。</footer>
+      </section>
+      <aside class="card dictionary-frame" data-dictionary-frame aria-label="用語辞書"></aside>
+    </div>
+  </main>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

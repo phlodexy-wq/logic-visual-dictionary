@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f7fb">
+  <title>④ タブロー法 | 論理学ビジュアル辞書</title>
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body data-page="tableau" data-root="../">
+  <main class="page">
+    <header class="site-header">
+      <a class="brand" href="../index.html">論理学ビジュアル辞書</a>
+      <p>図や用語を選ぶと、辞書の該当項目がハイライトされます。</p>
+    </header>
+    <nav class="site-nav" data-site-nav aria-label="章のナビゲーション"></nav>
+    <div class="layout">
+      <section class="chapter">
+        <h1>④ タブロー法：反例を探す</h1>
+        <p class="hint">結論を偽と仮定し、前提と矛盾するかどうかを枝分かれで調べます。</p>
+        <div class="button-row" role="group" aria-label="タブローの例">
+          <button class="choice" type="button" data-tableau="valid" aria-pressed="true">例1：妥当な推論</button>
+          <button class="choice" type="button" data-tableau="invalid" aria-pressed="false">例2：妥当でない推論</button>
+        </div>
+        <div class="tableau">
+          <article class="tableau-example" data-example="valid">
+            <h2>例1：P→Q、P ⊢ Q</h2>
+            <p class="explanation">結論Qを偽と仮定し、P→Qを「¬P または Q」に分解します。</p>
+            <ul class="tree">
+              <li>P→Q, P, ¬Q</li>
+              <li>├ ¬P <span class="closed">×（Pと矛盾）</span></li>
+              <li>└ Q <span class="closed">×（¬Qと矛盾）</span></li>
+            </ul>
+            <p class="explanation"><strong>すべての枝が閉じる</strong>ため、反例はなく、この推論は妥当です。</p>
+          </article>
+          <article class="tableau-example" data-example="invalid">
+            <h2>例2：P→Q、Q ⊢ P</h2>
+            <p class="explanation">結論Pを偽と仮定しても、前提と両立する枝が残ります。</p>
+            <ul class="tree">
+              <li>P→Q, Q, ¬P</li>
+              <li>├ ¬P <span class="open">○（開いた枝）</span></li>
+              <li>└ Q <span class="open">○（開いた枝）</span></li>
+            </ul>
+            <p class="explanation"><strong>開いた枝</strong>は反例（Pは偽、Qは真）を表すため、この推論は妥当ではありません。</p>
+          </article>
+        </div>
+        <div class="popup" id="tableau-status" role="status" aria-live="polite">選択中：すべての枝が閉じるため、推論は妥当です。</div>
+        <footer class="site-footer">ここでは命題論理の基本例を示しています。分岐規則や量化子を含むタブローは今後の拡張項目です。</footer>
+      </section>
+      <aside class="card dictionary-frame" data-dictionary-frame aria-label="用語辞書"></aside>
+    </div>
+  </main>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

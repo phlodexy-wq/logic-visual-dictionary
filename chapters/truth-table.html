@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f7fb">
+  <title>③ 真理表 | 論理学ビジュアル辞書</title>
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body data-page="truth-table" data-root="../">
+  <main class="page">
+    <header class="site-header">
+      <a class="brand" href="../index.html">論理学ビジュアル辞書</a>
+      <p>図や用語を選ぶと、辞書の該当項目がハイライトされます。</p>
+    </header>
+    <nav class="site-nav" data-site-nav aria-label="章のナビゲーション"></nav>
+    <div class="layout">
+      <section class="chapter">
+        <h1>③ 真理表：論理演算の真理値</h1>
+        <p class="hint">演算を選ぶと各行の結果が変わります。表の行を選んで真理値を確認しましょう。</p>
+        <div class="button-row" role="group" aria-label="論理演算">
+          <button class="choice" type="button" data-operation="and" aria-pressed="true">かつ（P ∧ Q）</button>
+          <button class="choice" type="button" data-operation="or" aria-pressed="false">または（P ∨ Q）</button>
+          <button class="choice" type="button" data-operation="implies" aria-pressed="false">ならば（P → Q）</button>
+          <button class="choice" type="button" data-operation="iff" aria-pressed="false">同値（P ↔ Q）</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <caption class="sr-only">選択した演算の真理表</caption>
+            <thead><tr><th scope="col">P</th><th scope="col">Q</th><th id="truth-heading" scope="col">P ∧ Q</th></tr></thead>
+            <tbody>
+              <tr class="table-row" data-p="true" data-q="true" tabindex="0"><td>真 (T)</td><td>真 (T)</td><td class="result"></td></tr>
+              <tr class="table-row" data-p="true" data-q="false" tabindex="0"><td>真 (T)</td><td>偽 (F)</td><td class="result"></td></tr>
+              <tr class="table-row" data-p="false" data-q="true" tabindex="0"><td>偽 (F)</td><td>真 (T)</td><td class="result"></td></tr>
+              <tr class="table-row" data-p="false" data-q="false" tabindex="0"><td>偽 (F)</td><td>偽 (F)</td><td class="result"></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="hint truth-description" id="truth-description">連言：PとQの両方が真のときだけ、結果が真です。</p>
+      </section>
+      <aside class="card dictionary-frame" data-dictionary-frame aria-label="用語辞書"></aside>
+    </div>
+  </main>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

@@ -1,6 +1,7 @@
 # 論理学ビジュアル辞書
 
 HTML・CSS・JavaScriptだけで動く、論理学の用語と図・表を連動させたミニアプリです。外部ライブラリやサーバーは必要ありません。
+ホーム画面、4つの章、用語辞書は別ページで、共通のCSS・JavaScript・ナビゲーションを利用します。インラインフレームは使いません。
 
 ## 章
 
@@ -11,10 +12,20 @@ HTML・CSS・JavaScriptだけで動く、論理学の用語と図・表を連動
 
 用語辞書は枠付きカードのフレームで、選んだ用語に応じて章や図・表の表示が連動します。
 
+## ページ構成
+
+- `index.html`：ホームと章へのリンク
+- `chapters/euler.html`：S・M・PとAEIOのオイラー図
+- `chapters/opposition.html`：AEIOの対当関係
+- `chapters/truth-table.html`：論理演算の真理表
+- `chapters/tableau.html`：タブロー法の例
+- `dictionary.html`：用語辞書の一覧
+- `assets/`：全ページ共通のスタイルと動作
+
 ## 動かし方
 
 `index.html` をブラウザーで開きます。
 
 ## GitHub Pagesで公開する場合
 
-このフォルダーを含むリポジトリでGitHub Pagesを有効にすると、リポジトリのサイトURLに `/logic-visual-dictionary/` を付けたパスで公開できます。公開後のURLは、GitHub Pagesの設定に表示されるサイトURLを確認してください。
+GitHub Pagesを有効にすると、リポジトリのURLがホームページになります。章ページや辞書へは画面上部のナビゲーションから移動できます。

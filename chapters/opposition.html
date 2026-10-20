@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f7fb">
+  <title>② 真偽の表（AEIO） | 論理学ビジュアル辞書</title>
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body data-page="opposition" data-root="../">
+  <main class="page">
+    <header class="site-header">
+      <a class="brand" href="../index.html">論理学ビジュアル辞書</a>
+      <p>図や用語を選ぶと、辞書の該当項目がハイライトされます。</p>
+    </header>
+    <nav class="site-nav" data-site-nav aria-label="章のナビゲーション"></nav>
+    <div class="layout">
+      <section class="chapter">
+        <h1>② 真偽の表：AEIOの対当関係</h1>
+        <p class="hint">伝統的な対当関係の四角形です。A・E・I・Oまたは関係を選ぶと、関係する命題をハイライトします。</p>
+        <svg class="square" viewBox="0 0 520 365" role="group" aria-label="AEIOの対当関係の四角形">
+          <line class="square-relation" x1="112" y1="82" x2="408" y2="82" data-relation-line="contrary"></line>
+          <line class="square-relation" x1="112" y1="285" x2="408" y2="285" data-relation-line="subcontrary"></line>
+          <line class="square-relation" x1="112" y1="82" x2="112" y2="285" data-relation-line="subalternation"></line>
+          <line class="square-relation" x1="408" y1="82" x2="408" y2="285" data-relation-line="subalternation"></line>
+          <line class="square-relation dashed" x1="112" y1="82" x2="408" y2="285" data-relation-line="contradiction"></line>
+          <line class="square-relation dashed" x1="408" y1="82" x2="112" y2="285" data-relation-line="contradiction"></line>
+          <g class="aeio-node" data-aeio="A" tabindex="0" role="button" aria-label="A 全称肯定"><circle cx="112" cy="82" r="34"></circle><text class="aeio-letter" x="112" y="90">A</text><text class="aeio-caption" x="112" y="38">全称肯定</text></g>
+          <g class="aeio-node" data-aeio="E" tabindex="0" role="button" aria-label="E 全称否定"><circle cx="408" cy="82" r="34"></circle><text class="aeio-letter" x="408" y="90">E</text><text class="aeio-caption" x="408" y="38">全称否定</text></g>
+          <g class="aeio-node" data-aeio="I" tabindex="0" role="button" aria-label="I 特称肯定"><circle cx="112" cy="285" r="34"></circle><text class="aeio-letter" x="112" y="293">I</text><text class="aeio-caption" x="112" y="342">特称肯定</text></g>
+          <g class="aeio-node" data-aeio="O" tabindex="0" role="button" aria-label="O 特称否定"><circle cx="408" cy="285" r="34"></circle><text class="aeio-letter" x="408" y="293">O</text><text class="aeio-caption" x="408" y="342">特称否定</text></g>
+        </svg>
+        <h2>関係を選ぶ</h2>
+        <div class="relation-buttons" role="group" aria-label="対当関係">
+          <button class="relation-choice" type="button" data-relation="contradiction" aria-pressed="true">矛盾</button>
+          <button class="relation-choice" type="button" data-relation="contrary" aria-pressed="false">反対</button>
+          <button class="relation-choice" type="button" data-relation="subcontrary" aria-pressed="false">小反対</button>
+          <button class="relation-choice" type="button" data-relation="subalternation" aria-pressed="false">大小</button>
+        </div>
+        <div class="popup" id="relation-description" role="status" aria-live="polite">矛盾：AとO、EとIは、必ず一方が真で一方が偽になります。</div>
+        <footer class="site-footer">「大小」の関係は伝統的な対当論に基づきます。現代論理では、特称命題の扱いが異なる体系があります。</footer>
+      </section>
+      <aside class="card dictionary-frame" data-dictionary-frame aria-label="用語辞書"></aside>
+    </div>
+  </main>
+  <script src="../assets/app.js"></script>
+</body>
+</html>
