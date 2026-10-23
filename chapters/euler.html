@@ -20,10 +20,43 @@
         <p class="hint">図に名前を付けて作成し、基本図形を選んでカスタムします。染色や×の変更は、このブラウザーに自動保存されます。</p>
         <section class="card euler-workbooks" aria-labelledby="euler-workbooks-title">
           <h2 id="euler-workbooks-title">図の作成・保存</h2>
-          <label class="pattern-select-label" for="euler-new-name">新しい図の名前</label>
-          <input class="pattern-select" id="euler-new-name" type="text" maxlength="80" placeholder="例：三段論法の練習 1">
-          <label class="pattern-select-label" for="euler-new-layout">最初の基本図形</label>
-          <select class="pattern-select" id="euler-new-layout">
+          <div data-edit-only>
+            <label class="pattern-select-label" for="euler-new-name">新しい図の名前</label>
+            <input class="pattern-select" id="euler-new-name" type="text" maxlength="80" placeholder="例：三段論法の練習 1">
+            <label class="pattern-select-label" for="euler-new-sentence">例文</label>
+            <textarea class="pattern-select euler-sentence-input" id="euler-new-sentence" maxlength="500" rows="2" placeholder="例：すべてのSはPである" required></textarea>
+            <label class="pattern-select-label" for="euler-new-layout">最初の基本図形</label>
+            <select class="pattern-select" id="euler-new-layout">
+              <option value="overlap">2項：SとPが交差</option>
+              <option value="subject-inside-predicate">2項：SがPに含まれる</option>
+              <option value="predicate-inside-subject">2項：PがSに含まれる</option>
+              <option value="disjoint">2項：SとPが交わらない</option>
+              <option value="equal">2項：SとPが同じ</option>
+              <option value="three-term">3項：S・M・Pの標準配置</option>
+            </select>
+            <button class="choice euler-create-button" id="euler-create" type="button">名前を付けて作成</button>
+          </div>
+          <label class="pattern-select-label" for="euler-saved-list">保存した図を開く</label>
+          <select class="pattern-select" id="euler-saved-list" aria-label="保存した図"></select>
+          <div class="button-row euler-save-actions" data-edit-only>
+            <button class="choice" id="euler-delete" type="button">この図を削除</button>
+            <button class="choice" id="euler-export" type="button">保存データを書き出す</button>
+            <label class="choice euler-import-label" for="euler-import">保存データを読み込む<input id="euler-import" type="file" accept="application/json,.json"></label>
+          </div>
+          <p class="hint euler-storage-note" data-edit-only>データはこのページのURLとブラウザーごとに保存され、GitHubには自動で送られません。GitHubにも保管する場合はJSONを書き出して手動でアップロードしてください。</p>
+        </section>
+        <div class="euler-viewer">
+          <strong class="euler-view-title" id="euler-view-title"></strong>
+          <p class="euler-example-view" id="euler-example-view"></p>
+          <div class="euler-sentence-editor" data-edit-only>
+            <label class="pattern-select-label" for="euler-current-sentence">例文（編集可）</label>
+            <textarea class="pattern-select euler-sentence-input" id="euler-current-sentence" maxlength="500" rows="2"></textarea>
+          </div>
+          <button class="choice euler-mode-toggle" id="euler-mode-toggle" type="button" aria-pressed="false">閲覧モードにする</button>
+        </div>
+        <div data-edit-only>
+          <label class="pattern-select-label" for="euler-layout">この図の基本図形</label>
+          <select class="pattern-select" id="euler-layout">
             <option value="overlap">2項：SとPが交差</option>
             <option value="subject-inside-predicate">2項：SがPに含まれる</option>
             <option value="predicate-inside-subject">2項：PがSに含まれる</option>
@@ -31,41 +64,24 @@
             <option value="equal">2項：SとPが同じ</option>
             <option value="three-term">3項：S・M・Pの標準配置</option>
           </select>
-          <button class="choice euler-create-button" id="euler-create" type="button">名前を付けて作成</button>
-          <label class="pattern-select-label" for="euler-saved-list">保存した図を開く</label>
-          <select class="pattern-select" id="euler-saved-list" aria-label="保存した図"></select>
-          <div class="button-row euler-save-actions">
-            <button class="choice" id="euler-delete" type="button">この図を削除</button>
-            <button class="choice" id="euler-export" type="button">保存データを書き出す</button>
-            <label class="choice euler-import-label" for="euler-import">保存データを読み込む<input id="euler-import" type="file" accept="application/json,.json"></label>
-          </div>
-          <p class="hint euler-storage-note">データはこのページのURLとブラウザーごとに保存され、GitHubには自動で送られません。GitHubにも保管する場合はJSONを書き出して手動でアップロードしてください。</p>
-        </section>
-        <label class="pattern-select-label" for="euler-layout">この図の基本図形</label>
-        <select class="pattern-select" id="euler-layout">
-          <option value="overlap">2項：SとPが交差</option>
-          <option value="subject-inside-predicate">2項：SがPに含まれる</option>
-          <option value="predicate-inside-subject">2項：PがSに含まれる</option>
-          <option value="disjoint">2項：SとPが交わらない</option>
-          <option value="equal">2項：SとPが同じ</option>
-          <option value="three-term">3項：S・M・Pの標準配置</option>
-        </select>
+        </div>
         <svg id="euler-diagram" class="diagram euler-diagram" viewBox="0 0 620 330" role="group" aria-describedby="euler-status" aria-label="編集できる集合図"></svg>
-        <div class="editor-toolbar">
+        <div class="editor-toolbar" data-edit-only>
           <p class="hint">青く塗った領域には要素がありません。×は白い領域に要素があることを示します。</p>
           <button class="choice" id="euler-reset" type="button">この基本図形をリセット</button>
         </div>
-        <div class="button-row euler-point-tools" role="group" aria-label="図上の×操作">
+        <div class="button-row euler-point-tools" data-edit-only role="group" aria-label="図上の×操作">
+          <button class="choice" id="euler-shade-mode" type="button" aria-pressed="false">図をクリックして染色</button>
           <button class="choice" id="euler-place-mode" type="button" aria-pressed="false">図をクリックして×を置く</button>
           <button class="choice" id="euler-remove-mode" type="button" aria-pressed="false">図をクリックして×を消す</button>
         </div>
-        <div class="euler-regions" id="euler-regions" aria-label="領域ごとの染色と存在記号の操作"></div>
+        <div class="euler-regions" id="euler-regions" data-edit-only aria-label="領域ごとの染色と存在記号の操作"></div>
         <p class="editor-status" id="euler-status" aria-live="polite"></p>
-        <div class="card categorical-card">
+        <div class="card categorical-card" data-edit-only>
           <strong>使い方</strong>
-          <p class="hint categorical-description">各領域のボタンで染色を切り替えます。「図をクリックして×を置く」を選ぶと、境界線上を含め、図の任意の位置に×を置けます。図形を切り替えても編集内容は名前付きの図に保存されます。</p>
+          <p class="hint categorical-description">「図をクリックして染色」を選んで領域をクリックすると、染色を切り替えられます。「図をクリックして×を置く」では、境界線上を含む位置に×を置けます。図形ごとの染色と×は、名前付きの図に保存されます。</p>
         </div>
-        <aside class="role-note">
+        <aside class="role-note" data-edit-only>
           <strong>S・M・Pは推論内での役割記号</strong>
           <p>S（結論の主語項）・P（結論の述語項）・M（媒概念）は、三段論法の中で項が担う役割を表します。円や具体的な集合名と同じものではなく、推論の前提・結論に応じて対応が決まります。</p>
         </aside>

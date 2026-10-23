@@ -201,6 +201,7 @@ let eulerDiagrams = [];
 let activeEulerDiagramId = null;
 let eulerPointMode = "none";
 let eulerStorageError = "";
+let eulerViewingMode = false;
 
 function newEulerState() {
   return {shaded:new Set(),markers:[]};
@@ -219,6 +220,7 @@ function serializeEulerDiagram(diagram) {
   return {
     id:diagram.id,
     name:diagram.name,
+    sentence:diagram.sentence,
     layoutId:diagram.layoutId,
     states:Object.fromEntries([...diagram.states].map(([layoutId,state]) => [
       layoutId,
@@ -259,7 +261,13 @@ function parseEulerDiagram(value) {
     }
     states.set(layoutId, state);
   }
-  return {id:value.id,name:value.name.trim(),layoutId:value.layoutId,states};
+  return {
+    id:value.id,
+    name:value.name.trim(),
+    sentence:typeof value.sentence === "string" ? value.sentence.slice(0,500) : "",
+    layoutId:value.layoutId,
+    states
+  };
 }
 
 function setEulerStatus(message) {
@@ -392,6 +400,16 @@ function pointIsInShadedRegion(layout, point, state) {
   );
 }
 
+function regionAtPoint(layout, point) {
+  const memberships = new Set(layout.circles.filter(circle =>
+    Math.hypot(point.x - circle.cx, point.y - circle.cy) <= circle.r
+  ).map(circle => circle.id));
+  return layout.regions.find(region =>
+    region.inside.every(id => memberships.has(id)) &&
+    region.outside.every(id => !memberships.has(id))
+  ) || null;
+}
+
 function renderEulerEditor(layoutId) {
   const diagram = getActiveEulerDiagram();
   const svg = document.getElementById("euler-diagram");
@@ -403,8 +421,13 @@ function renderEulerEditor(layoutId) {
     document.getElementById("euler-regions").replaceChildren();
     document.getElementById("euler-layout").disabled = true;
     document.getElementById("euler-reset").disabled = true;
+    document.getElementById("euler-shade-mode").disabled = true;
     document.getElementById("euler-place-mode").disabled = true;
     document.getElementById("euler-remove-mode").disabled = true;
+    document.getElementById("euler-mode-toggle").disabled = true;
+    document.getElementById("euler-view-title").textContent = "";
+    document.getElementById("euler-example-view").textContent = "";
+    document.getElementById("euler-current-sentence").value = "";
     setEulerStatus(eulerStorageError || "編集する図を作成してください。作成した図はこのブラウザーに自動保存されます。");
     renderEulerSavedList();
     return;
@@ -416,8 +439,14 @@ function renderEulerEditor(layoutId) {
   const state = getEulerState(diagram, selectedLayoutId);
   document.getElementById("euler-layout").disabled = false;
   document.getElementById("euler-reset").disabled = false;
+  document.getElementById("euler-shade-mode").disabled = false;
   document.getElementById("euler-place-mode").disabled = false;
   document.getElementById("euler-remove-mode").disabled = false;
+  document.getElementById("euler-mode-toggle").disabled = false;
+  document.getElementById("euler-view-title").textContent = diagram.name;
+  document.getElementById("euler-example-view").textContent = diagram.sentence;
+  document.getElementById("euler-example-view").hidden = !diagram.sentence;
+  document.getElementById("euler-current-sentence").value = diagram.sentence;
   document.getElementById("euler-layout").value = selectedLayoutId;
   document.getElementById("euler-saved-list").value = diagram.id;
   const [,,width,height] = layout.viewBox.split(" ").map(Number);
@@ -474,8 +503,13 @@ function renderEulerEditor(layoutId) {
   document.getElementById("euler-reset").disabled = shadedCount === 0 && markerCount === 0;
   document.getElementById("euler-place-mode").setAttribute("aria-pressed", String(eulerPointMode === "place"));
   document.getElementById("euler-remove-mode").setAttribute("aria-pressed", String(eulerPointMode === "remove"));
+  document.getElementById("euler-shade-mode").setAttribute("aria-pressed", String(eulerPointMode === "shade"));
+  document.getElementById("euler-mode-toggle").setAttribute("aria-pressed", String(eulerViewingMode));
+  document.getElementById("euler-mode-toggle").textContent = eulerViewingMode ? "編集画面に戻る" : "閲覧モードにする";
+  document.querySelector(".chapter").classList.toggle("euler-viewing-mode", eulerViewingMode);
   svg.classList.toggle("euler-place-active", eulerPointMode === "place");
   svg.classList.toggle("euler-remove-active", eulerPointMode === "remove");
+  svg.classList.toggle("euler-shade-active", eulerPointMode === "shade");
   renderEulerSavedList();
 }
 
@@ -513,7 +547,7 @@ function makeEulerToggle(layoutId, region, action, active) {
       setEulerStatus("染色された領域には×を置けません。先に染色を解除してください。");
       return;
     }
-    persistEulerDiagrams();
+    if (!persistEulerDiagrams()) setEulerStatus(eulerStorageError);
     renderEulerEditor(layoutId);
   });
   return button;
@@ -530,6 +564,27 @@ function addEulerMarker(point) {
     return;
   }
   state.markers.push({x:placedPoint.x,y:placedPoint.y});
+  persistEulerDiagrams();
+  renderEulerEditor(diagram.layoutId);
+}
+
+function toggleEulerShade(point) {
+  const diagram = getActiveEulerDiagram();
+  if (!diagram) return;
+  const layout = eulerLayouts[diagram.layoutId];
+  const state = getEulerState(diagram, diagram.layoutId);
+  const region = regionAtPoint(layout, point);
+  if (!region) {
+    setEulerStatus("領域をクリックしてください。線の上を染色する場合は、隣接する領域を選んでください。");
+    return;
+  }
+  if (!state.shaded.has(region.id) &&
+      state.markers.some(marker => pointBelongsToRegion(layout, marker, region))) {
+    setEulerStatus("この領域には×があるため染色できません。先に×を移動するか削除してください。");
+    return;
+  }
+  if (state.shaded.has(region.id)) state.shaded.delete(region.id);
+  else state.shaded.add(region.id);
   persistEulerDiagrams();
   renderEulerEditor(diagram.layoutId);
 }
@@ -557,17 +612,27 @@ function removeNearestEulerMarker(point) {
 }
 
 function handleEulerDiagramClick(event) {
-  if (eulerPointMode === "none") {
-    setEulerStatus("×を置く／消すモードを選んでから図をクリックしてください。");
-    return;
-  }
+  if (eulerViewingMode) return;
   const svg = event.currentTarget;
   const svgPoint = svg.createSVGPoint();
   svgPoint.x = event.clientX;
   svgPoint.y = event.clientY;
   const point = svgPoint.matrixTransform(svg.getScreenCTM().inverse());
   if (eulerPointMode === "place") addEulerMarker(point);
-  else removeNearestEulerMarker(point);
+  else if (eulerPointMode === "remove") removeNearestEulerMarker(point);
+  else if (eulerPointMode === "shade") toggleEulerShade(point);
+}
+
+function setEulerPointMode(mode) {
+  eulerPointMode = eulerPointMode === mode ? "none" : mode;
+  renderEulerEditor(getActiveEulerDiagram()?.layoutId);
+  const messages = {
+    place:"×を置く場所を図上でクリックしてください。円の境界線上にも置けます。",
+    remove:"消したい×の近くを図上でクリックしてください。",
+    shade:"染色したい領域を図上でクリックしてください。もう一度押すと染色が解除されます。",
+    none:"図上の操作を終了しました。"
+  };
+  setEulerStatus(messages[eulerPointMode]);
 }
 
 function createEulerDiagramId() {
@@ -576,11 +641,18 @@ function createEulerDiagramId() {
 
 function createEulerDiagram() {
   const nameInput = document.getElementById("euler-new-name");
+  const sentenceInput = document.getElementById("euler-new-sentence");
   const name = nameInput.value.trim();
+  const sentence = sentenceInput.value.trim();
   const layoutId = document.getElementById("euler-new-layout").value;
   if (!name) {
     setEulerStatus("図の名前を入力してください。");
     nameInput.focus();
+    return;
+  }
+  if (!sentence) {
+    setEulerStatus("例文を入力してください。");
+    sentenceInput.focus();
     return;
   }
   if (eulerDiagrams.some(diagram => diagram.name.toLocaleLowerCase("ja-JP") === name.toLocaleLowerCase("ja-JP"))) {
@@ -593,12 +665,18 @@ function createEulerDiagram() {
     setEulerStatus("基本図形を選び直してください。");
     return;
   }
-  const diagram = {id:createEulerDiagramId(),name,layoutId,states:new Map()};
+  const diagram = {id:createEulerDiagramId(),name,sentence,layoutId,states:new Map()};
   eulerDiagrams.push(diagram);
   activeEulerDiagramId = diagram.id;
   getEulerState(diagram, layoutId);
-  persistEulerDiagrams();
+  if (!persistEulerDiagrams()) {
+    eulerDiagrams = eulerDiagrams.filter(item => item.id !== diagram.id);
+    activeEulerDiagramId = eulerDiagrams[0]?.id || null;
+    renderEulerEditor(getActiveEulerDiagram()?.layoutId);
+    return;
+  }
   nameInput.value = "";
+  sentenceInput.value = "";
   renderEulerEditor(layoutId);
 }
 
@@ -646,9 +724,16 @@ function importEulerDiagrams(file) {
         names.add(key);
         ids.add(diagram.id);
       }
-      eulerDiagrams.push(...diagrams);
+      const previousDiagrams = eulerDiagrams;
+      const previousActiveId = activeEulerDiagramId;
+      eulerDiagrams = [...eulerDiagrams,...diagrams];
       if (!activeEulerDiagramId && diagrams.length) activeEulerDiagramId = diagrams[0].id;
-      if (!persistEulerDiagrams()) return;
+      if (!persistEulerDiagrams()) {
+        eulerDiagrams = previousDiagrams;
+        activeEulerDiagramId = previousActiveId;
+        renderEulerEditor(getActiveEulerDiagram()?.layoutId);
+        return;
+      }
       renderEulerEditor(getActiveEulerDiagram()?.layoutId);
       setEulerStatus(`${diagrams.length}件の図を読み込み、ブラウザーに保存しました。`);
     } catch (error) {
@@ -767,6 +852,14 @@ function setupEuler() {
   document.getElementById("euler-new-name").addEventListener("keydown", event => {
     if (event.key === "Enter") createEulerDiagram();
   });
+  document.getElementById("euler-current-sentence").addEventListener("input", event => {
+    const diagram = getActiveEulerDiagram();
+    if (!diagram) return;
+    diagram.sentence = event.currentTarget.value;
+    document.getElementById("euler-example-view").textContent = diagram.sentence;
+    document.getElementById("euler-example-view").hidden = !diagram.sentence.trim();
+    persistEulerDiagrams();
+  });
   document.getElementById("euler-saved-list").addEventListener("change", event => {
     activeEulerDiagramId = event.currentTarget.value || null;
     eulerPointMode = "none";
@@ -796,19 +889,14 @@ function setupEuler() {
     persistEulerDiagrams();
     renderEulerEditor(diagram.layoutId);
   });
-  document.getElementById("euler-place-mode").addEventListener("click", () => {
-    eulerPointMode = eulerPointMode === "place" ? "none" : "place";
+  document.getElementById("euler-shade-mode").addEventListener("click", () => setEulerPointMode("shade"));
+  document.getElementById("euler-place-mode").addEventListener("click", () => setEulerPointMode("place"));
+  document.getElementById("euler-remove-mode").addEventListener("click", () => setEulerPointMode("remove"));
+  document.getElementById("euler-mode-toggle").addEventListener("click", () => {
+    eulerViewingMode = !eulerViewingMode;
+    eulerPointMode = "none";
     renderEulerEditor(getActiveEulerDiagram()?.layoutId);
-    setEulerStatus(eulerPointMode === "place"
-      ? "×を置く場所を図上でクリックしてください。円の境界線上にも置けます。"
-      : "×の配置モードを終了しました。");
-  });
-  document.getElementById("euler-remove-mode").addEventListener("click", () => {
-    eulerPointMode = eulerPointMode === "remove" ? "none" : "remove";
-    renderEulerEditor(getActiveEulerDiagram()?.layoutId);
-    setEulerStatus(eulerPointMode === "remove"
-      ? "消したい×の近くを図上でクリックしてください。"
-      : "×の削除モードを終了しました。");
+    setEulerStatus(eulerViewingMode ? "閲覧モード：図と例文を表示しています。" : "編集モードに戻りました。");
   });
   document.getElementById("euler-diagram").addEventListener("click", handleEulerDiagramClick);
   if (eulerDiagrams.length && !activeEulerDiagramId) activeEulerDiagramId = eulerDiagrams[0].id;

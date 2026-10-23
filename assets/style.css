@@ -66,6 +66,17 @@ button.dict-item { cursor: pointer; }
 .euler-import-label input { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
 .euler-import-label:focus-within { outline: 2px solid var(--blue); outline-offset: 2px; }
 .euler-storage-note { margin: 8px 0 0; font-size: .82rem; }
+.euler-sentence-input { display: block; min-height: 64px; resize: vertical; }
+.euler-viewer { display: grid; gap: 6px; margin: 14px 0 4px; }
+.euler-view-title { font-size: 1.25rem; }
+.euler-example-view { margin: 0; color: #526174; line-height: 1.6; white-space: pre-wrap; }
+.euler-example-view:empty { display: none; }
+.euler-sentence-editor { margin: 2px 0; }
+.euler-mode-toggle { justify-self: start; margin: 4px 0; }
+.chapter.euler-viewing-mode [data-edit-only] { display: none !important; }
+.chapter.euler-viewing-mode #euler-diagram { margin-top: 16px; }
+.euler-diagram.euler-place-active, .euler-diagram.euler-shade-active { cursor: crosshair; }
+.euler-diagram.euler-remove-active { cursor: pointer; }
 .editor-toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin: 4px 0 12px; }
 .editor-toolbar .hint { flex: 1 1 280px; margin: 0; }
 .editor-toolbar .choice { flex: 0 0 auto; }
