@@ -20,17 +20,18 @@
         <p class="hint">命題の形式と具体例を選びます。S・Pは図中の項、a/e/i/oは命題の形式を表します。</p>
         <label class="pattern-select-label" for="euler-pattern">命題の例</label>
         <select class="pattern-select" id="euler-pattern">
-          <option value="a-human-animal">A-1　すべての人間は動物である</option>
-          <option value="a-equilateral-equiangular">A-2　すべての等辺三角形は等角三角形である</option>
-          <option value="e-turtle-rabbit">E　すべてのカメはウサギでない</option>
-          <option value="i-musician-genius">I-1　ある音楽家は天才である</option>
-          <option value="i-student-female">I-2　ある学生は女子学生である</option>
-          <option value="o-musician-genius">O-1　ある音楽家は天才でない</option>
-          <option value="o-student-female">O-2　ある学生は女子学生でない</option>
+          <option value="a-human-animal">全称肯定命題 AaP（A-1）</option>
+          <option value="a-equilateral-equiangular">全称肯定命題 AaP（A-2）</option>
+          <option value="e-turtle-rabbit">全称否定命題 SeP</option>
+          <option value="i-musician-genius">特称肯定命題 SiP（I-1）</option>
+          <option value="i-student-female">特称肯定命題 SiP（I-2）</option>
+          <option value="o-musician-genius">特称否定命題 SoP（O-1）</option>
+          <option value="o-student-female">特称否定命題 SoP（O-2）</option>
         </select>
-        <svg id="euler-diagram" class="diagram euler-diagram" viewBox="0 0 620 230" role="img" aria-label="SaPの集合関係を表すベン図"></svg>
+        <svg id="euler-diagram" class="diagram euler-diagram" viewBox="0 0 620 330" role="img" aria-label="SaPの集合関係を表すベン図"></svg>
         <div class="card categorical-card">
-          <strong id="euler-statement">すべての人間は動物である</strong>
+          <strong id="euler-statement">全称肯定命題 AaP</strong>
+          <p class="hint" id="euler-example">すべての人間は動物である</p>
           <p class="formula-display" id="euler-formula">SaP</p>
           <p class="hint categorical-description" id="euler-explanation">青い領域は空となるSの部分です。A-1はSがPに包摂されるため、存在記号Xは置きません。</p>
         </div>

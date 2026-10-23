@@ -11,7 +11,7 @@ const terms = [
   {id:"inclusion",title:"包摂",description:"一方のクラスの要素がすべて他方にも含まれる関係です。図では一つの円をもう一方の円の内側に描きます。",page:"euler",message:"包摂関係の例をオイラー図で確認しています。"},
   {id:"existence",title:"存在記号（×）",description:"×は、その領域に少なくとも一つ対象が存在することを示します。塗りつぶしとは別の情報です。",page:"euler",message:"×は選択した領域に1つ以上の対象が存在することを示します。"},
   {id:"SaP",title:"SaP（全称肯定）",description:"「すべてのSはPである」を表す伝統的な記号です。包摂関係を示し、存在を主張する×は付けません。",page:"euler",message:"SaPは「すべてのSはPである」を表します。"},
-  {id:"SeP",title:"SeP（全称否定）",description:"「どのSもPではない」を表す伝統的な記号です。存在を仮定する×は、白いSの領域に置きます。",page:"euler",message:"SePは「どのSもPではない」を表します。"},
+  {id:"SeP",title:"SeP（全称否定）",description:"「どのSもPではない」を表す伝統的な記号です。全称命題なので、Sの存在を主張する×は置きません。",page:"euler",message:"SePは「どのSもPではない」を表します。"},
   {id:"SiP",title:"SiP（特称肯定）",description:"「あるSはPである」を表す伝統的な記号です。×は白い共通領域S∩Pに置きます。",page:"euler",message:"SiPは「あるSはPである」を表します。"},
   {id:"SoP",title:"SoP（特称否定）",description:"「あるSはPでない」を表す伝統的な記号です。×は白いS∖Pの領域に置きます。",page:"euler",message:"SoPは「あるSはPでない」を表します。"},
   {id:"A",title:"A（全称肯定）",description:"「すべてのSはPである」。伝統的な形式ではA命題と呼びます。",page:"euler",message:"A命題「すべてのSはPである」を確認しています。"},
@@ -117,45 +117,45 @@ function setActiveTerm(term) {
 
 const eulerPatterns = {
   "a-human-animal": {
-    form:"A", sentence:"すべての人間は動物である", formula:"SaP",
+    form:"A", title:"全称肯定命題 AaP", sentence:"すべての人間は動物である", formula:"SaP",
     explanation:"青は空であるSの部分を表します。SはPに包摂されるので、S∖Pに対象はなく、存在記号Xは置きません。",
-    relation:"overlap", subjectCircle:{cx:245,cy:160,r:108}, predicateCircle:{cx:365,cy:160,r:108},
-    shade:"subject-only", subjectLabel:{x:192,y:105}, predicateLabel:{x:418,y:105}
+    relation:"overlap", subjectCircle:{cx:245,cy:180,r:108}, predicateCircle:{cx:365,cy:180,r:108},
+    shade:"subject-only", subjectLabel:{x:192,y:125}, predicateLabel:{x:418,y:125}
   },
   "a-equilateral-equiangular": {
-    form:"A", sentence:"すべての等辺三角形は等角三角形である", formula:"SaP",
-    explanation:"この例ではSとPが同じクラスを指すものとして、円を重ねてS＝Pと示します。包摂関係にあるため、存在記号Xは置きません。",
-    relation:"equal", subjectCircle:{cx:310,cy:160,r:108}, predicateCircle:{cx:310,cy:160,r:108}
+    form:"A", title:"全称肯定命題 AaP", sentence:"すべての等辺三角形は等角三角形である", formula:"SaP",
+    explanation:"この例ではSとPが同じクラスを指すので、円全体を染色し、S＝Pと示します。全称命題のため、存在記号Xは置きません。",
+    relation:"equal", subjectCircle:{cx:310,cy:180,r:108}, predicateCircle:{cx:310,cy:180,r:108}, shade:"whole-subject"
   },
   "e-turtle-rabbit": {
-    form:"E", sentence:"すべてのカメはウサギでない", formula:"SeP",
-    explanation:"SとPの共通部分に対象はありません。Xは存在を仮定したカメを、染色されていないSの領域に示します。",
-    relation:"overlap", subjectCircle:{cx:245,cy:160,r:108}, predicateCircle:{cx:365,cy:160,r:108},
-    shade:"intersection", existence:{x:192,y:160}, subjectLabel:{x:192,y:105}, predicateLabel:{x:418,y:105}
+    form:"E", title:"全称否定命題 SeP", sentence:"すべてのカメはウサギでない", formula:"SeP",
+    explanation:"S（カメ）とP（ウサギ）は交わらないクラスとして描きます。全称否定命題はカメの存在までは主張しないため、Xは置きません。",
+    relation:"disjoint", subjectCircle:{cx:185,cy:180,r:82}, predicateCircle:{cx:435,cy:180,r:82},
+    subjectLabel:{x:185,y:180}, predicateLabel:{x:435,y:180}
   },
   "i-musician-genius": {
-    form:"I", sentence:"ある音楽家は天才である", formula:"SiP",
-    explanation:"XはSとPの共通部分に存在する音楽家を示します。Xは無色の領域に置きます。",
-    relation:"overlap", subjectCircle:{cx:245,cy:160,r:108}, predicateCircle:{cx:365,cy:160,r:108},
-    existence:{x:305,y:160}, subjectLabel:{x:192,y:105}, predicateLabel:{x:418,y:105}
+    form:"I", title:"特称肯定命題 SiP", sentence:"ある音楽家は天才である", formula:"SiP",
+    explanation:"S（音楽家）とP（天才）の共通集合に、少なくとも一つの音楽家が存在します。Xは白い共通領域に置きます。",
+    relation:"overlap", subjectCircle:{cx:245,cy:180,r:108}, predicateCircle:{cx:365,cy:180,r:108},
+    existence:{x:305,y:180}, subjectLabel:{x:192,y:125}, predicateLabel:{x:418,y:125}
   },
   "i-student-female": {
-    form:"I", sentence:"ある学生は女子学生である", formula:"SiP",
-    explanation:"P（女子学生）がS（学生）に含まれる例です。Xは共通部分に存在する学生を示し、無色の領域に置きます。",
-    relation:"predicate-inside-subject", subjectCircle:{cx:310,cy:160,r:132}, predicateCircle:{cx:350,cy:160,r:68},
-    existence:{x:350,y:160}, subjectLabel:{x:208,y:90}, predicateLabel:{x:365,y:112}
+    form:"I", title:"特称肯定命題 SiP", sentence:"ある学生は女子学生である", formula:"SiP",
+    explanation:"P（女子学生）がS（学生）に含まれる例です。Xは白いPの領域に存在する学生を示します。",
+    relation:"predicate-inside-subject", subjectCircle:{cx:310,cy:180,r:132}, predicateCircle:{cx:350,cy:180,r:68},
+    existence:{x:350,y:180}, subjectLabel:{x:205,y:105}, predicateLabel:{x:350,y:132}
   },
   "o-musician-genius": {
-    form:"O", sentence:"ある音楽家は天才でない", formula:"SoP",
-    explanation:"XはP（天才）でないS（音楽家）を示します。S∖Pの無色の領域に置きます。",
-    relation:"overlap", subjectCircle:{cx:245,cy:160,r:108}, predicateCircle:{cx:365,cy:160,r:108},
-    existence:{x:192,y:160}, subjectLabel:{x:192,y:105}, predicateLabel:{x:418,y:105}
+    form:"O", title:"特称否定命題 SoP", sentence:"ある音楽家は天才でない", formula:"SoP",
+    explanation:"XはS（音楽家）とP（天才）の差集合S∖Pに存在する音楽家を示します。Xは白い領域に置きます。",
+    relation:"overlap", subjectCircle:{cx:245,cy:180,r:108}, predicateCircle:{cx:365,cy:180,r:108},
+    existence:{x:192,y:180}, subjectLabel:{x:192,y:125}, predicateLabel:{x:418,y:125}
   },
   "o-student-female": {
-    form:"O", sentence:"ある学生は女子学生でない", formula:"SoP",
-    explanation:"P（女子学生）がS（学生）に含まれる例です。Xは女子学生ではない学生を示し、S∖Pの無色の領域に置きます。",
-    relation:"predicate-inside-subject", subjectCircle:{cx:310,cy:160,r:132}, predicateCircle:{cx:350,cy:160,r:68},
-    existence:{x:225,y:160}, subjectLabel:{x:208,y:90}, predicateLabel:{x:350,y:160}
+    form:"O", title:"特称否定命題 SoP", sentence:"ある学生は女子学生でない", formula:"SoP",
+    explanation:"P（女子学生）がS（学生）に含まれる例です。Pの円は白く保ち、Xは差集合S∖Pの白い部分に置きます。",
+    relation:"predicate-inside-subject", subjectCircle:{cx:310,cy:180,r:132}, predicateCircle:{cx:350,cy:180,r:68},
+    existence:{x:225,y:180}, subjectLabel:{x:205,y:105}, predicateLabel:{x:350,y:132}
   }
 };
 
@@ -168,7 +168,8 @@ function updateEulerPattern(patternId) {
   if (!svg) return;
   const selector = document.getElementById("euler-pattern");
   if (selector) selector.value = patternId;
-  document.getElementById("euler-statement").textContent = pattern.sentence;
+  document.getElementById("euler-statement").textContent = pattern.title;
+  document.getElementById("euler-example").textContent = pattern.sentence;
   document.getElementById("euler-formula").textContent = pattern.formula;
   document.getElementById("euler-explanation").textContent = pattern.explanation;
 
@@ -176,7 +177,9 @@ function updateEulerPattern(patternId) {
   const p = pattern.predicateCircle;
   let highlight = "";
   if (pattern.shade === "subject-only") {
-    highlight = `<defs><mask id="subject-only-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="620" height="230"><rect width="620" height="230" fill="black"/><circle cx="${s.cx}" cy="${s.cy}" r="${s.r}" fill="white"/><circle cx="${p.cx}" cy="${p.cy}" r="${p.r}" fill="black"/></mask></defs><rect class="euler-highlight" width="620" height="230" mask="url(#subject-only-mask)"/>`;
+    highlight = `<defs><mask id="subject-only-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="620" height="330"><rect width="620" height="330" fill="black"/><circle cx="${s.cx}" cy="${s.cy}" r="${s.r}" fill="white"/><circle cx="${p.cx}" cy="${p.cy}" r="${p.r}" fill="black"/></mask></defs><rect class="euler-highlight" width="620" height="330" mask="url(#subject-only-mask)"/>`;
+  } else if (pattern.shade === "whole-subject") {
+    highlight = `<circle class="euler-highlight" cx="${s.cx}" cy="${s.cy}" r="${s.r}"/>`;
   } else if (pattern.shade === "intersection") {
     highlight = `<defs><clipPath id="subject-clip"><circle cx="${s.cx}" cy="${s.cy}" r="${s.r}"/></clipPath></defs><g clip-path="url(#subject-clip)"><circle class="euler-highlight" cx="${p.cx}" cy="${p.cy}" r="${p.r}"/></g>`;
   }

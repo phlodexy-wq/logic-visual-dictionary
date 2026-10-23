@@ -51,7 +51,7 @@ button.dict-item { cursor: pointer; }
 .pattern-select-label { display: block; margin: 12px 0 5px; color: #526174; font-size: .86rem; }
 .pattern-select { width: 100%; min-height: 42px; padding: 8px 34px 8px 11px; border: 1px solid #c7d2e2; border-radius: 9px; background: #fff; color: #1d2939; font: inherit; }
 .formula-display { margin: 7px 0; color: #163f99; font-family: ui-monospace, Consolas, monospace; font-size: 1.25rem; font-weight: 700; letter-spacing: .04em; }
-.euler-diagram { min-height: 180px; margin-top: 6px; }
+.euler-diagram { height: auto; margin-top: 6px; overflow: visible; }
 .euler-boundary { fill: none; stroke: #344054; stroke-width: 2.5; }
 .euler-highlight { fill: #b9d0ff; }
 .euler-existence { fill: #1d2939; font-size: 30px; font-weight: 700; text-anchor: middle; dominant-baseline: central; }
