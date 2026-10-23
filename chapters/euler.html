@@ -16,16 +16,17 @@
     <nav class="site-nav" data-site-nav aria-label="章のナビゲーション"></nav>
     <div class="layout">
       <section class="chapter">
-        <h1>① オイラー図：命題の集合関係</h1>
-        <p class="hint">名前だけで図を作り、あとから編集します。変更は自動保存されます。</p>
-        <section class="card euler-workbooks" aria-labelledby="euler-workbooks-title">
-          <h2 id="euler-workbooks-title">図の作成・保存</h2>
+        <div class="euler-heading">
+          <h1>① オイラー図：命題の集合関係</h1>
+          <button class="choice euler-mode-toggle" id="euler-mode-toggle" type="button">編集</button>
+        </div>
+        <section class="card euler-workbooks" aria-label="図の選択と管理">
           <div data-edit-only>
             <label class="pattern-select-label" for="euler-new-name">名前</label>
             <input class="pattern-select" id="euler-new-name" type="text" maxlength="80" placeholder="図の名前">
             <button class="choice euler-create-button" id="euler-create" type="button">作成</button>
           </div>
-          <label class="pattern-select-label" for="euler-saved-list">図を開く</label>
+          <label class="pattern-select-label" for="euler-saved-list">図</label>
           <select class="pattern-select" id="euler-saved-list" aria-label="保存した図"></select>
           <div class="button-row euler-save-actions" data-edit-only>
             <button class="choice" id="euler-delete" type="button">削除</button>
@@ -37,13 +38,18 @@
         <div class="euler-viewer">
           <strong class="euler-view-title" id="euler-view-title"></strong>
           <p class="euler-example-view" id="euler-example-view"></p>
+          <details class="euler-description-view" id="euler-description-view" data-view-only>
+            <summary>説明</summary>
+            <p id="euler-description-text"></p>
+          </details>
           <div class="euler-sentence-editor" data-edit-only>
             <label class="pattern-select-label" for="euler-current-name">名前</label>
             <input class="pattern-select" id="euler-current-name" type="text" maxlength="80">
             <label class="pattern-select-label" for="euler-current-sentence">例文</label>
             <textarea class="pattern-select euler-sentence-input" id="euler-current-sentence" maxlength="500" rows="2"></textarea>
+            <label class="pattern-select-label" for="euler-current-description">説明</label>
+            <textarea class="pattern-select euler-sentence-input" id="euler-current-description" maxlength="2000" rows="4"></textarea>
           </div>
-          <button class="choice euler-mode-toggle" id="euler-mode-toggle" type="button" aria-pressed="false">閲覧</button>
         </div>
         <div data-edit-only>
           <label class="pattern-select-label" for="euler-layout">図形</label>
@@ -69,7 +75,7 @@
           <button class="choice" data-euler-term-mode="P" type="button" aria-pressed="false">P</button>
           <button class="choice" id="euler-remove-mode" type="button" aria-pressed="false">消す</button>
         </div>
-        <p class="editor-status" id="euler-status" aria-live="polite"></p>
+        <p class="editor-status" id="euler-status" data-edit-only aria-live="polite"></p>
         <div class="card categorical-card" data-edit-only>
           <strong>使い方</strong>
           <p class="hint categorical-description">「塗る」は円の内側、「×・S・M・P」は置く位置、「消す」は印の近くをクリックします。</p>
@@ -78,7 +84,6 @@
           <strong>S・M・Pは推論内での役割記号</strong>
           <p>S（結論の主語項）・P（結論の述語項）・M（媒概念）は、三段論法の中で項が担う役割を表します。円や具体的な集合名と同じものではなく、推論の前提・結論に応じて対応が決まります。</p>
         </aside>
-        <footer class="site-footer">図はブラウザー内に保存され、JSONで書き出せます。</footer>
       </section>
       <aside class="card dictionary-frame" data-dictionary-frame aria-label="用語辞書"></aside>
     </div>

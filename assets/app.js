@@ -201,7 +201,7 @@ let eulerDiagrams = [];
 let activeEulerDiagramId = null;
 let eulerPointMode = "none";
 let eulerStorageError = "";
-let eulerViewingMode = false;
+let eulerViewingMode = true;
 
 function getActiveEulerDiagram() {
   return eulerDiagrams.find(diagram => diagram.id === activeEulerDiagramId) || null;
@@ -228,6 +228,7 @@ function serializeEulerDiagram(diagram) {
     id:diagram.id,
     name:diagram.name,
     sentence:diagram.sentence,
+    description:diagram.description,
     layoutId:diagram.layoutId,
     states:Object.fromEntries([...diagram.states].map(([layoutId,state]) => [
       layoutId,
@@ -292,6 +293,7 @@ function parseEulerDiagram(value) {
     id:value.id,
     name:value.name.trim(),
     sentence:typeof value.sentence === "string" ? value.sentence.slice(0,500) : "",
+    description:typeof value.description === "string" ? value.description.slice(0,2000) : "",
     layoutId:value.layoutId,
     states
   };
@@ -421,6 +423,7 @@ function renderEulerEditor(layoutId) {
   const svg = document.getElementById("euler-diagram");
   if (!svg) return;
   if (!diagram) {
+    document.querySelector(".chapter").classList.toggle("euler-viewing-mode", eulerViewingMode);
     svg.setAttribute("viewBox", "0 0 620 330");
     svg.setAttribute("aria-label", "名前を付けて図を作成すると編集できます");
     svg.innerHTML = "";
@@ -430,12 +433,16 @@ function renderEulerEditor(layoutId) {
     document.getElementById("euler-place-mode").disabled = true;
     document.getElementById("euler-remove-mode").disabled = true;
     document.querySelectorAll("[data-euler-term-mode]").forEach(button => { button.disabled = true; });
-    document.getElementById("euler-mode-toggle").disabled = true;
+    document.getElementById("euler-mode-toggle").disabled = false;
+    document.getElementById("euler-mode-toggle").textContent = eulerViewingMode ? "編集" : "閲覧";
     document.getElementById("euler-view-title").textContent = "";
     document.getElementById("euler-example-view").textContent = "";
     document.getElementById("euler-current-name").disabled = true;
     document.getElementById("euler-current-sentence").value = "";
     document.getElementById("euler-current-sentence").disabled = true;
+    document.getElementById("euler-current-description").value = "";
+    document.getElementById("euler-current-description").disabled = true;
+    document.getElementById("euler-description-view").hidden = true;
     setEulerStatus(eulerStorageError || "編集する図を作成してください。作成した図はこのブラウザーに自動保存されます。");
     renderEulerSavedList();
     return;
@@ -454,11 +461,15 @@ function renderEulerEditor(layoutId) {
   document.getElementById("euler-mode-toggle").disabled = false;
   document.getElementById("euler-current-name").disabled = false;
   document.getElementById("euler-current-sentence").disabled = false;
+  document.getElementById("euler-current-description").disabled = false;
   document.getElementById("euler-view-title").textContent = diagram.name;
   document.getElementById("euler-current-name").value = diagram.name;
   document.getElementById("euler-example-view").textContent = diagram.sentence;
   document.getElementById("euler-example-view").hidden = !diagram.sentence;
   document.getElementById("euler-current-sentence").value = diagram.sentence;
+  document.getElementById("euler-current-description").value = diagram.description;
+  document.getElementById("euler-description-text").textContent = diagram.description;
+  document.getElementById("euler-description-view").hidden = !diagram.description.trim();
   document.getElementById("euler-layout").value = selectedLayoutId;
   document.getElementById("euler-saved-list").value = diagram.id;
   const [,,width,height] = layout.viewBox.split(" ").map(Number);
@@ -507,7 +518,6 @@ function renderEulerEditor(layoutId) {
   document.querySelectorAll("[data-euler-term-mode]").forEach(button => {
     button.setAttribute("aria-pressed", String(eulerPointMode === button.dataset.eulerTermMode));
   });
-  document.getElementById("euler-mode-toggle").setAttribute("aria-pressed", String(eulerViewingMode));
   document.getElementById("euler-mode-toggle").textContent = eulerViewingMode ? "編集" : "閲覧";
   document.querySelector(".chapter").classList.toggle("euler-viewing-mode", eulerViewingMode);
   svg.classList.toggle("euler-place-active", ["place","S","M","P"].includes(eulerPointMode));
@@ -631,7 +641,7 @@ function createEulerDiagram() {
     nameInput.select();
     return;
   }
-  const diagram = {id:createEulerDiagramId(),name,sentence:"",layoutId,states:new Map()};
+  const diagram = {id:createEulerDiagramId(),name,sentence:"",description:"",layoutId,states:new Map()};
   eulerDiagrams.push(diagram);
   activeEulerDiagramId = diagram.id;
   getEulerState(diagram, layoutId);
@@ -643,7 +653,7 @@ function createEulerDiagram() {
   }
   nameInput.value = "";
   renderEulerEditor(layoutId);
-  setEulerStatus(`${name}を作成しました。図形や例文を編集できます。`);
+  setEulerStatus(`${name}を作成しました。`);
 }
 
 function exportEulerDiagrams() {
@@ -824,6 +834,14 @@ function setupEuler() {
     diagram.sentence = event.currentTarget.value;
     document.getElementById("euler-example-view").textContent = diagram.sentence;
     document.getElementById("euler-example-view").hidden = !diagram.sentence.trim();
+    persistEulerDiagrams();
+  });
+  document.getElementById("euler-current-description").addEventListener("input", event => {
+    const diagram = getActiveEulerDiagram();
+    if (!diagram) return;
+    diagram.description = event.currentTarget.value;
+    document.getElementById("euler-description-text").textContent = diagram.description;
+    document.getElementById("euler-description-view").hidden = !diagram.description.trim();
     persistEulerDiagrams();
   });
   document.getElementById("euler-current-name").addEventListener("change", event => {

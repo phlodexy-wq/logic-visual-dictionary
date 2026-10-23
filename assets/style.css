@@ -59,8 +59,9 @@ button.dict-item { cursor: pointer; }
 .euler-term-active { cursor: crosshair; }
 .euler-place-active { cursor: crosshair; }
 .euler-remove-active { cursor: pointer; }
-.euler-workbooks { margin: 16px 0; padding: 14px; }
-.euler-workbooks h2 { margin-bottom: 8px; }
+.euler-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+.euler-heading h1 { margin-bottom: 8px; }
+.euler-workbooks { margin: 8px 0 12px; padding: 12px 14px; }
 .euler-create-button { width: 100%; margin-top: 10px; }
 .euler-save-actions { margin: 10px 0 4px; }
 .euler-import-label { display: inline-flex; align-items: center; cursor: pointer; }
@@ -73,9 +74,13 @@ button.dict-item { cursor: pointer; }
 .euler-example-view { margin: 0; color: #526174; line-height: 1.6; white-space: pre-wrap; }
 .euler-example-view:empty { display: none; }
 .euler-sentence-editor { margin: 2px 0; }
-.euler-mode-toggle { justify-self: start; margin: 4px 0; }
+.euler-mode-toggle { flex: 0 0 auto; margin: 4px 0; }
 .chapter.euler-viewing-mode [data-edit-only] { display: none !important; }
+.chapter:not(.euler-viewing-mode) [data-view-only] { display: none !important; }
 .chapter.euler-viewing-mode #euler-diagram { margin-top: 16px; }
+.euler-description-view { margin: 4px 0; color: #526174; line-height: 1.6; }
+.euler-description-view summary { width: fit-content; color: #344054; cursor: pointer; font-weight: 650; }
+.euler-description-view p { margin: 8px 0 0; white-space: pre-wrap; }
 .euler-diagram.euler-place-active, .euler-diagram.euler-shade-active { cursor: crosshair; }
 .euler-diagram.euler-remove-active { cursor: pointer; }
 .editor-toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin: 4px 0 12px; }
