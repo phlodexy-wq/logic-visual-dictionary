@@ -256,9 +256,6 @@ function parseEulerDiagram(value) {
       shaded:new Set(rawState.shaded),
       markers:rawState.markers.map(point => ({x:point.x,y:point.y}))
     };
-    if (state.markers.some(point => pointIsInShadedRegion(layout, point, state))) {
-      throw new Error("染色された領域に×が置かれています。");
-    }
     states.set(layoutId, state);
   }
   return {
@@ -341,12 +338,6 @@ function renderEulerSavedList() {
   document.getElementById("euler-export").disabled = eulerDiagrams.length === 0;
 }
 
-function pointIsOnBoundary(layout, point) {
-  return layout.circles.some(circle =>
-    Math.abs(Math.hypot(point.x - circle.cx, point.y - circle.cy) - circle.r) <= 8
-  );
-}
-
 function snapPointToBoundary(layout, point) {
   const intersections = [];
   for (let first = 0; first < layout.circles.length; first += 1) {
@@ -383,21 +374,6 @@ function snapPointToBoundary(layout, point) {
     x:nearest.circle.cx + (point.x - nearest.circle.cx) * scale,
     y:nearest.circle.cy + (point.y - nearest.circle.cy) * scale
   };
-}
-
-function pointBelongsToRegion(layout, point, region) {
-  const memberships = new Set(layout.circles.filter(circle =>
-    Math.hypot(point.x - circle.cx, point.y - circle.cy) <= circle.r
-  ).map(circle => circle.id));
-  return region.inside.every(id => memberships.has(id)) &&
-    region.outside.every(id => !memberships.has(id));
-}
-
-function pointIsInShadedRegion(layout, point, state) {
-  if (pointIsOnBoundary(layout, point)) return false;
-  return layout.regions.some(region =>
-    state.shaded.has(region.id) && pointBelongsToRegion(layout, point, region)
-  );
 }
 
 function regionAtPoint(layout, point) {
@@ -524,16 +500,11 @@ function makeEulerToggle(layoutId, region, action, active) {
   } else {
     button.textContent = active ? "×を消す" : "×を置く";
     button.setAttribute("aria-label", `${region.title}に×を${active ? "消す" : "置く"}`);
-    button.disabled = !active && getEulerState(getActiveEulerDiagram(), layoutId).shaded.has(region.id);
   }
   button.addEventListener("click", () => {
     const diagram = getActiveEulerDiagram();
     const state = getEulerState(diagram, layoutId);
     if (action === "shade") {
-      if (!active && state.markers.some(point => pointBelongsToRegion(eulerLayouts[layoutId], point, region))) {
-        setEulerStatus("×が置かれた領域は空にできません。先に×を別の場所へ移すか削除してください。");
-        return;
-      }
       if (state.shaded.has(region.id)) state.shaded.delete(region.id);
       else state.shaded.add(region.id);
     } else if (active) {
@@ -541,11 +512,8 @@ function makeEulerToggle(layoutId, region, action, active) {
         Math.hypot(point.x - region.point.x, point.y - region.point.y) <= 24
       );
       if (index >= 0) state.markers.splice(index, 1);
-    } else if (!pointIsInShadedRegion(eulerLayouts[layoutId], region.point, state)) {
-      state.markers.push({...region.point});
     } else {
-      setEulerStatus("染色された領域には×を置けません。先に染色を解除してください。");
-      return;
+      state.markers.push({...region.point});
     }
     if (!persistEulerDiagrams()) setEulerStatus(eulerStorageError);
     renderEulerEditor(layoutId);
@@ -559,10 +527,6 @@ function addEulerMarker(point) {
   const layout = eulerLayouts[diagram.layoutId];
   const state = getEulerState(diagram, diagram.layoutId);
   const placedPoint = snapPointToBoundary(layout, point);
-  if (pointIsInShadedRegion(layout, placedPoint, state)) {
-    setEulerStatus("染色された領域には×を置けません。線上への配置は可能です。");
-    return;
-  }
   state.markers.push({x:placedPoint.x,y:placedPoint.y});
   persistEulerDiagrams();
   renderEulerEditor(diagram.layoutId);
@@ -576,11 +540,6 @@ function toggleEulerShade(point) {
   const region = regionAtPoint(layout, point);
   if (!region) {
     setEulerStatus("領域をクリックしてください。線の上を染色する場合は、隣接する領域を選んでください。");
-    return;
-  }
-  if (!state.shaded.has(region.id) &&
-      state.markers.some(marker => pointBelongsToRegion(layout, marker, region))) {
-    setEulerStatus("この領域には×があるため染色できません。先に×を移動するか削除してください。");
     return;
   }
   if (state.shaded.has(region.id)) state.shaded.delete(region.id);
