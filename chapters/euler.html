@@ -16,34 +16,31 @@
     <nav class="site-nav" data-site-nav aria-label="章のナビゲーション"></nav>
     <div class="layout">
       <section class="chapter">
-        <h1>① オイラー図：S・M・Pの関係</h1>
-        <p class="hint">三段論法で使う主語項S・媒概念M・述語項Pを図で表します。S・M・Pの円やAEIOの形式を選んでみましょう。</p>
-        <div class="button-row" role="group" aria-label="AEIO命題">
-          <button class="choice" type="button" data-categorical="A" aria-pressed="true">A 全称肯定</button>
-          <button class="choice" type="button" data-categorical="E" aria-pressed="false">E 全称否定</button>
-          <button class="choice" type="button" data-categorical="I" aria-pressed="false">I 特称肯定</button>
-          <button class="choice" type="button" data-categorical="O" aria-pressed="false">O 特称否定</button>
+        <h1>① オイラー図：命題ごとの集合関係</h1>
+        <p class="hint">例を選ぶと、主語と述語の集合関係が図に表れます。染色は命題が真となる部分の強調、×はその領域に要素が少なくとも1つあることを示します。</p>
+        <div class="pattern-picker" role="group" aria-label="オイラー図の例">
+          <button class="pattern-choice" type="button" data-euler-pattern="a-human-animal" aria-pressed="true">A-1 人間・動物</button>
+          <button class="pattern-choice" type="button" data-euler-pattern="a-equilateral-equiangular" aria-pressed="false">A-2 等辺三角形・等角三角形</button>
+          <button class="pattern-choice" type="button" data-euler-pattern="e-turtle-rabbit" aria-pressed="false">E カメ・ウサギ</button>
+          <button class="pattern-choice" type="button" data-euler-pattern="i-musician-genius" aria-pressed="false">I-1 音楽家・天才</button>
+          <button class="pattern-choice" type="button" data-euler-pattern="i-student-female" aria-pressed="false">I-2 学生・女子学生</button>
+          <button class="pattern-choice" type="button" data-euler-pattern="o-musician-genius" aria-pressed="false">O-1 音楽家・天才</button>
+          <button class="pattern-choice" type="button" data-euler-pattern="o-student-female" aria-pressed="false">O-2 学生・女子学生</button>
         </div>
-        <svg class="diagram" viewBox="0 0 540 330" role="group" aria-label="S・M・Pの三つの項の関係を示す模式図">
-          <rect x="3" y="3" width="534" height="324" rx="14" fill="#f8fafc"></rect>
-          <line class="term-line" x1="80" y1="272" x2="460" y2="272"></line>
-          <circle class="term-circle" cx="190" cy="145" r="95" fill="#ffb4a2" stroke="#d66a54" data-term-node="S" tabindex="0" role="button" aria-label="主語項S"></circle>
-          <circle class="term-circle" cx="350" cy="145" r="95" fill="#9bd8f5" stroke="#3689b4" data-term-node="P" tabindex="0" role="button" aria-label="述語項P"></circle>
-          <circle class="term-circle" cx="270" cy="145" r="72" fill="#c7b5f5" stroke="#7754b5" data-term-node="M" tabindex="0" role="button" aria-label="媒概念M"></circle>
-          <text class="region-label" x="138" y="150">S</text>
-          <text class="region-label" x="402" y="150">P</text>
-          <text class="region-label" x="270" y="150">M</text>
-          <g id="categorical-marker" transform="translate(138 145)" pointer-events="none">
-            <circle r="20" fill="#fff" stroke="#344054" stroke-width="2"></circle>
-            <text id="categorical-marker-text" x="0" y="8" text-anchor="middle" font-size="25" font-weight="700" fill="#263247">∅</text>
-          </g>
-          <text class="region-label" x="270" y="302" font-size="13">S・M・Pは項（term）の記号</text>
-        </svg>
+        <dl class="term-labels" aria-label="命題の項">
+          <div><dt>主語</dt><dd id="euler-subject">人間</dd></div>
+          <div><dt>述語</dt><dd id="euler-predicate">動物</dd></div>
+        </dl>
+        <svg id="euler-diagram" class="diagram euler-diagram" viewBox="0 0 620 330" role="img" aria-label="人間は動物に含まれることを表すオイラー図"></svg>
         <div class="card categorical-card">
-          <strong id="categorical-title">A：すべてのSはPである</strong>
-          <p class="hint categorical-description" id="categorical-description">全称肯定。Sに属するものはすべてPにも属します。Mは、二つの前提をつなぐ媒概念です。</p>
+          <strong id="euler-statement">A-1：すべての人間は動物である</strong>
+          <p class="hint categorical-description" id="euler-explanation">主語「人間」の集合が、述語「動物」の集合に含まれる例です。主語の集合部分を一色で強調しています。</p>
         </div>
-        <footer class="site-footer">図は項の関係を示す模式図です。AEIOの正確な対当関係は第2章で確認できます。</footer>
+        <aside class="role-note">
+          <strong>S・M・Pは推論内での役割記号</strong>
+          <p>S（結論の主語項）・P（結論の述語項）・M（媒概念）は、三段論法の中で項が担う役割を表します。円や具体的な集合名と同じものではなく、推論の前提・結論に応じて対応が決まります。</p>
+        </aside>
+        <footer class="site-footer">図の境界線は集合の境目を示します。染色は一色に統一し、重なりを隠す不透明な塗り重ねはしていません。</footer>
       </section>
       <aside class="card dictionary-frame" data-dictionary-frame aria-label="用語辞書"></aside>
     </div>

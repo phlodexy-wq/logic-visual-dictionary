@@ -1,7 +1,15 @@
 const terms = [
-  {id:"S",title:"主語項 S",description:"「何について述べるか」を表す項です。命題「すべてのSはPである」のSにあたります。",page:"euler",message:"主語項Sを選択しました。オイラー図でSの領域を確認できます。"},
-  {id:"M",title:"媒概念 M",description:"三段論法の二つの前提をつなぐ項です。結論には現れません。",page:"euler",message:"媒概念Mを選択しました。三段論法の前提をつなぐ項です。"},
-  {id:"P",title:"述語項 P",description:"主語項について何が述べられるかを表します。命題変数Pとは別の、項を表す記号です。",page:"euler",message:"述語項Pを選択しました。オイラー図でPの領域を確認できます。"},
+  {id:"S",title:"S（結論の主語項）",description:"三段論法で、結論の主語となる項につける役割記号です。特定の集合や円と同じ意味ではありません。",page:"euler",message:"Sは結論の主語項を表す役割記号です。"},
+  {id:"M",title:"M（媒概念）",description:"三段論法の二つの前提をつなぐ項につける役割記号です。結論には現れず、具体的な集合名と同じものではありません。",page:"euler",message:"Mは二つの前提をつなぐ媒概念の役割記号です。"},
+  {id:"P",title:"P（結論の述語項）",description:"三段論法で、結論の述語となる項につける役割記号です。命題変数や特定の集合と同じ意味ではありません。",page:"euler",message:"Pは結論の述語項を表す役割記号です。"},
+  {id:"subject",title:"主語（Subject）",description:"個々の命題で話題の対象となる項です。推論によって、S・M・Pのどの役割記号に対応するかが変わります。",page:"euler",message:"主語は命題ごとに決まります。選択した図では主語欄に示します。"},
+  {id:"predicate",title:"述語（Predicate）",description:"個々の命題で主語について述べる項です。推論内の役割記号Pと常に同一とは限りません。",page:"euler",message:"述語は命題ごとに決まります。選択した図では述語欄に示します。"},
+  {id:"universal",title:"全称",description:"主語が指す対象すべてについて述べる量です。「すべての〜は」「どの〜も〜ない」などの形です。",page:"euler",message:"全称命題の例をオイラー図で確認しています。"},
+  {id:"singular",title:"単称",description:"特定の一個体について述べる命題です。特称（少なくとも一つの対象）とは区別されます。",page:"euler",message:"単称は一つの個体について述べ、特称は一つ以上の対象の存在を述べます。"},
+  {id:"particular",title:"特称",description:"主語が指す対象のうち、少なくとも一つについて述べる量です。「ある〜は〜である」などの形です。",page:"euler",message:"特称命題の例をオイラー図の×印で確認しています。"},
+  {id:"class",title:"クラス（集合）",description:"ある性質をもつ対象の集まりです。図の円は具体的なクラスを表し、S・M・Pの記号そのものではありません。",page:"euler",message:"円は命題に登場するクラスを表します。"},
+  {id:"inclusion",title:"包摂",description:"一方のクラスの要素がすべて他方にも含まれる関係です。図では一つの円をもう一方の円の内側に描きます。",page:"euler",message:"包摂関係の例をオイラー図で確認しています。"},
+  {id:"existence",title:"存在記号（×）",description:"×は、その領域に少なくとも一つ対象が存在することを示します。塗りつぶしとは別の情報です。",page:"euler",message:"×は選択した領域に1つ以上の対象が存在することを示します。"},
   {id:"A",title:"A（全称肯定）",description:"「すべてのSはPである」。伝統的な形式ではA命題と呼びます。",page:"euler",message:"A命題「すべてのSはPである」を確認しています。"},
   {id:"E",title:"E（全称否定）",description:"「どのSもPではない」。伝統的な形式ではE命題と呼びます。",page:"euler",message:"E命題「どのSもPではない」を確認しています。"},
   {id:"I",title:"I（特称肯定）",description:"「あるSはPである」。少なくとも一つのSがPでもあります。",page:"euler",message:"I命題「あるSはPである」を確認しています。"},
@@ -103,26 +111,90 @@ function setActiveTerm(term) {
   });
 }
 
-function updateCategorical(form) {
-  const forms = {
-    A: ["A：すべてのSはPである", "全称肯定。Sに属するものはすべてPにも属します。Mは、二つの前提をつなぐ媒概念です。", "∅", "translate(138 145)"],
-    E: ["E：どのSもPではない", "全称否定。SとPに共通するものはありません。Mは、二つの前提をつなぐ媒概念です。", "∅", "translate(270 145)"],
-    I: ["I：あるSはPである", "特称肯定。少なくとも一つのSがPにも属します。Mは、二つの前提をつなぐ媒概念です。", "×", "translate(270 145)"],
-    O: ["O：あるSはPではない", "特称否定。少なくとも一つのSがPには属しません。Mは、二つの前提をつなぐ媒概念です。", "×", "translate(138 145)"]
-  };
-  const formData = forms[form];
-  if (!formData) return;
-  document.querySelectorAll("[data-categorical]").forEach(button => {
-    button.setAttribute("aria-pressed", String(button.dataset.categorical === form));
+const eulerPatterns = {
+  "a-human-animal": {
+    form:"A", subject:"人間", predicate:"動物", statement:"A-1：すべての人間は動物である",
+    explanation:"主語「人間」のクラスが、述語「動物」のクラスに含まれる例です。染色は主語クラス全体を示します。",
+    relation:"subject-inside-predicate", subjectCircle:{cx:310,cy:165,r:68}, predicateCircle:{cx:310,cy:165,r:132}
+  },
+  "a-equilateral-equiangular": {
+    form:"A", subject:"等辺三角形", predicate:"等角三角形", statement:"A-2：すべての等辺三角形は等角三角形である",
+    explanation:"この例ではユーザー指定の幾何学的な前提に基づき、主語と述語のクラスが同じ範囲として重なります。染色は共通のクラスです。",
+    relation:"equal", subjectCircle:{cx:310,cy:165,r:105}, predicateCircle:{cx:310,cy:165,r:105}
+  },
+  "e-turtle-rabbit": {
+    form:"E", subject:"カメ", predicate:"ウサギ", statement:"E：すべてのカメはウサギでない",
+    explanation:"主語「カメ」と述語「ウサギ」のクラスが交わらない例です。主語クラスのうち、述語に当たらない部分を染色しています。",
+    relation:"disjoint", subjectCircle:{cx:190,cy:165,r:82}, predicateCircle:{cx:430,cy:165,r:82}
+  },
+  "i-musician-genius": {
+    form:"I", subject:"音楽家", predicate:"天才", statement:"I-1：ある音楽家は天才である",
+    explanation:"音楽家と天才の共通部分に、少なくとも一つの対象がある例です。×はその存在を示します。",
+    relation:"overlap", subjectCircle:{cx:250,cy:165,r:112}, predicateCircle:{cx:370,cy:165,r:112}, highlight:"intersection", existence:{x:310,y:165}
+  },
+  "i-student-female": {
+    form:"I", subject:"学生", predicate:"女子学生", statement:"I-2：ある学生は女子学生である",
+    explanation:"女子学生のクラスが学生のクラスに含まれる例です。共通部分に少なくとも一つの対象があることを×で示します。",
+    relation:"predicate-inside-subject", subjectCircle:{cx:310,cy:165,r:132}, predicateCircle:{cx:350,cy:165,r:68}, highlight:"intersection", existence:{x:350,y:165}
+  },
+  "o-musician-genius": {
+    form:"O", subject:"音楽家", predicate:"天才", statement:"O-1：ある音楽家は天才でない",
+    explanation:"音楽家と天才の共通部分の外にある音楽家が少なくとも一人いる例です。×は主語クラスのうち述語に当たらない領域にあります。",
+    relation:"overlap", subjectCircle:{cx:250,cy:165,r:112}, predicateCircle:{cx:370,cy:165,r:112}, highlight:"subject-only", existence:{x:208,y:165}
+  },
+  "o-student-female": {
+    form:"O", subject:"学生", predicate:"女子学生", statement:"O-2：ある学生は女子学生でない",
+    explanation:"女子学生のクラスが学生のクラスに含まれますが、女子学生でない学生も少なくとも一人いる例です。",
+    relation:"predicate-inside-subject", subjectCircle:{cx:310,cy:165,r:132}, predicateCircle:{cx:350,cy:165,r:68}, highlight:"subject-only", existence:{x:235,y:165}
+  }
+};
+
+const defaultEulerPattern = {A:"a-human-animal", E:"e-turtle-rabbit", I:"i-musician-genius", O:"o-musician-genius"};
+
+function updateEulerPattern(patternId) {
+  const pattern = eulerPatterns[patternId];
+  if (!pattern) return;
+  const svg = document.getElementById("euler-diagram");
+  if (!svg) return;
+  document.querySelectorAll("[data-euler-pattern]").forEach(button => {
+    button.setAttribute("aria-pressed", String(button.dataset.eulerPattern === patternId));
   });
-  const title = document.getElementById("categorical-title");
-  const description = document.getElementById("categorical-description");
-  const marker = document.getElementById("categorical-marker");
-  if (title) title.textContent = formData[0];
-  if (description) description.textContent = formData[1];
-  if (marker) marker.setAttribute("transform", formData[3]);
-  const markerText = document.getElementById("categorical-marker-text");
-  if (markerText) markerText.textContent = formData[2];
+  document.getElementById("euler-subject").textContent = pattern.subject;
+  document.getElementById("euler-predicate").textContent = pattern.predicate;
+  document.getElementById("euler-statement").textContent = pattern.statement;
+  document.getElementById("euler-explanation").textContent = pattern.explanation;
+
+  const s = pattern.subjectCircle;
+  const p = pattern.predicateCircle;
+  const subject = `<circle cx="${s.cx}" cy="${s.cy}" r="${s.r}"/>`;
+  const predicate = `<circle cx="${p.cx}" cy="${p.cy}" r="${p.r}"/>`;
+  const highlight = pattern.highlight === "intersection"
+    ? `<defs><clipPath id="subject-clip">${subject}</clipPath></defs><g clip-path="url(#subject-clip)"><circle class="euler-highlight" cx="${p.cx}" cy="${p.cy}" r="${p.r}"/></g>`
+    : pattern.highlight === "subject-only"
+      ? `<defs><mask id="predicate-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="620" height="330"><rect width="620" height="330" fill="white"/>${predicate.replace("<circle", "<circle fill=\"black\"")}</mask></defs><circle class="euler-highlight" cx="${s.cx}" cy="${s.cy}" r="${s.r}" mask="url(#predicate-mask)"/>`
+      : `<circle class="euler-highlight" cx="${s.cx}" cy="${s.cy}" r="${s.r}"/>`;
+  const outline = pattern.relation === "equal"
+    ? `<circle class="euler-boundary" cx="${s.cx}" cy="${s.cy}" r="${s.r}"/>`
+    : `<circle class="euler-boundary" cx="${s.cx}" cy="${s.cy}" r="${s.r}"/><circle class="euler-boundary" cx="${p.cx}" cy="${p.cy}" r="${p.r}"/>`;
+  const marker = pattern.existence
+    ? `<text class="euler-existence" x="${pattern.existence.x}" y="${pattern.existence.y}" aria-label="この領域に要素が少なくとも1つある">×</text>`
+    : "";
+  svg.setAttribute("aria-label", `${pattern.statement}。${pattern.subject}が主語、${pattern.predicate}が述語です。`);
+  svg.innerHTML = `${highlight}${outline}${marker}`;
+  setActiveTerm(pattern.form);
+  return pattern;
+}
+
+function showEulerTerm(termId) {
+  const patternForTerm = {
+    A:"a-human-animal",
+    E:"e-turtle-rabbit",
+    I:"i-musician-genius",
+    O:"o-musician-genius",
+    universal:"a-human-animal",
+    particular:"i-musician-genius"
+  };
+  if (patternForTerm[termId]) updateEulerPattern(patternForTerm[termId]);
 }
 
 const relations = {
@@ -199,8 +271,8 @@ function activateTerm(termId) {
     window.location.href = `${pageUrl(term.page)}?term=${encodeURIComponent(termId)}`;
     return;
   }
+  if (currentPage === "euler") showEulerTerm(termId);
   setActiveTerm(termId);
-  if (["A","E","I","O"].includes(termId)) updateCategorical(termId);
   if (relations[termId]) updateRelation(termId);
   if (operations[termId]) updateOperation(termId);
   if (["tableau","closed","open"].includes(termId)) updateTableau(termId);
@@ -209,20 +281,14 @@ function activateTerm(termId) {
 }
 
 function setupEuler() {
-  document.querySelectorAll("[data-categorical]").forEach(button => {
+  document.querySelectorAll("[data-euler-pattern]").forEach(button => {
     button.addEventListener("click", () => {
-      const term = button.dataset.categorical;
-      setActiveTerm(term);
-      updateCategorical(term);
-      document.getElementById("dictionary-popup").textContent = terms.find(item => item.id === term).message;
+      const pattern = updateEulerPattern(button.dataset.eulerPattern);
+      document.getElementById("dictionary-popup").textContent =
+        `${pattern.statement}。${pattern.subject}が主語、${pattern.predicate}が述語です。`;
     });
   });
-  document.querySelectorAll("[data-term-node]").forEach(node => {
-    node.addEventListener("click", () => activateTerm(node.dataset.termNode));
-    node.addEventListener("keydown", event => {
-      if (event.key === "Enter" || event.key === " ") { event.preventDefault(); activateTerm(node.dataset.termNode); }
-    });
-  });
+  updateEulerPattern("a-human-animal");
 }
 
 function setupOpposition() {
