@@ -115,100 +115,186 @@ function setActiveTerm(term) {
   });
 }
 
-const eulerPatterns = {
-  "a-human-animal": {
-    form:"A", title:"全称肯定命題 AaP", sentence:"すべての人間は動物である", formula:"SaP",
-    explanation:"青は空であるSの部分を表します。SはPに包摂されるので、S∖Pに対象はなく、存在記号Xは置きません。",
-    relation:"overlap", subjectCircle:{cx:245,cy:180,r:108}, predicateCircle:{cx:365,cy:180,r:108},
-    shade:"subject-only", subjectLabel:{x:192,y:125}, predicateLabel:{x:418,y:125}
+const eulerLayouts = {
+  overlap: {
+    title:"SとPが交差", viewBox:"0 0 620 330",
+    circles:[
+      {id:"S",cx:245,cy:180,r:108,label:{x:192,y:125}},
+      {id:"P",cx:365,cy:180,r:108,label:{x:418,y:125}}
+    ],
+    regions:[
+      {id:"outside",title:"円の外",inside:[],outside:["S","P"],point:{x:310,y:315}},
+      {id:"s-only",title:"Sのみ（S∖P）",inside:["S"],outside:["P"],point:{x:192,y:180}},
+      {id:"intersection",title:"共通部分（S∩P）",inside:["S","P"],outside:[],point:{x:305,y:180}},
+      {id:"p-only",title:"Pのみ（P∖S）",inside:["P"],outside:["S"],point:{x:418,y:180}}
+    ]
   },
-  "a-equilateral-equiangular": {
-    form:"A", title:"全称肯定命題 AaP", sentence:"すべての等辺三角形は等角三角形である", formula:"SaP",
-    explanation:"この例ではSとPが同じクラスを指すので、円全体を染色し、S＝Pと示します。全称命題のため、存在記号Xは置きません。",
-    relation:"equal", subjectCircle:{cx:310,cy:180,r:108}, predicateCircle:{cx:310,cy:180,r:108}, shade:"whole-subject"
+  "subject-inside-predicate": {
+    title:"SがPに含まれる", viewBox:"0 0 620 330",
+    circles:[
+      {id:"S",cx:310,cy:180,r:70,label:{x:310,y:180}},
+      {id:"P",cx:310,cy:180,r:132,label:{x:310,y:75}}
+    ],
+    regions:[
+      {id:"outside",title:"円の外",inside:[],outside:["S","P"],point:{x:310,y:330}},
+      {id:"intersection",title:"共通部分（S∩P＝S）",inside:["S","P"],outside:[],point:{x:310,y:180}},
+      {id:"p-only",title:"Pのみ（P∖S）",inside:["P"],outside:["S"],point:{x:310,y:265}}
+    ]
   },
-  "e-turtle-rabbit": {
-    form:"E", title:"全称否定命題 SeP", sentence:"すべてのカメはウサギでない", formula:"SeP",
-    explanation:"S（カメ）とP（ウサギ）は交わらないクラスとして描きます。全称否定命題はカメの存在までは主張しないため、Xは置きません。",
-    relation:"disjoint", subjectCircle:{cx:185,cy:180,r:82}, predicateCircle:{cx:435,cy:180,r:82},
-    subjectLabel:{x:185,y:180}, predicateLabel:{x:435,y:180}
+  "predicate-inside-subject": {
+    title:"PがSに含まれる", viewBox:"0 0 620 330",
+    circles:[
+      {id:"S",cx:310,cy:180,r:132,label:{x:215,y:105}},
+      {id:"P",cx:350,cy:180,r:68,label:{x:350,y:180}}
+    ],
+    regions:[
+      {id:"outside",title:"円の外",inside:[],outside:["S","P"],point:{x:310,y:330}},
+      {id:"s-only",title:"Sのみ（S∖P）",inside:["S"],outside:["P"],point:{x:225,y:180}},
+      {id:"intersection",title:"共通部分（S∩P＝P）",inside:["S","P"],outside:[],point:{x:350,y:180}}
+    ]
   },
-  "i-musician-genius": {
-    form:"I", title:"特称肯定命題 SiP", sentence:"ある音楽家は天才である", formula:"SiP",
-    explanation:"S（音楽家）とP（天才）の共通集合に、少なくとも一つの音楽家が存在します。Xは白い共通領域に置きます。",
-    relation:"overlap", subjectCircle:{cx:245,cy:180,r:108}, predicateCircle:{cx:365,cy:180,r:108},
-    existence:{x:305,y:180}, subjectLabel:{x:192,y:125}, predicateLabel:{x:418,y:125}
+  disjoint: {
+    title:"SとPが交わらない", viewBox:"0 0 620 330",
+    circles:[
+      {id:"S",cx:185,cy:180,r:82,label:{x:185,y:180}},
+      {id:"P",cx:435,cy:180,r:82,label:{x:435,y:180}}
+    ],
+    regions:[
+      {id:"outside",title:"円の外",inside:[],outside:["S","P"],point:{x:310,y:180}},
+      {id:"s-only",title:"Sのみ（S∖P）",inside:["S"],outside:["P"],point:{x:185,y:180}},
+      {id:"p-only",title:"Pのみ（P∖S）",inside:["P"],outside:["S"],point:{x:435,y:180}}
+    ]
   },
-  "i-student-female": {
-    form:"I", title:"特称肯定命題 SiP", sentence:"ある学生は女子学生である", formula:"SiP",
-    explanation:"P（女子学生）がS（学生）に含まれる例です。Xは白いPの領域に存在する学生を示します。",
-    relation:"predicate-inside-subject", subjectCircle:{cx:310,cy:180,r:132}, predicateCircle:{cx:350,cy:180,r:68},
-    existence:{x:350,y:180}, subjectLabel:{x:205,y:105}, predicateLabel:{x:350,y:132}
+  equal: {
+    title:"SとPが同じ", viewBox:"0 0 620 330",
+    circles:[
+      {id:"S",cx:310,cy:180,r:108,label:{x:310,y:180}},
+      {id:"P",cx:310,cy:180,r:108,label:{x:310,y:180}}
+    ],
+    regions:[
+      {id:"outside",title:"円の外",inside:[],outside:["S","P"],point:{x:310,y:315}},
+      {id:"intersection",title:"共通部分（S∩P＝S＝P）",inside:["S","P"],outside:[],point:{x:310,y:180}}
+    ]
   },
-  "o-musician-genius": {
-    form:"O", title:"特称否定命題 SoP", sentence:"ある音楽家は天才でない", formula:"SoP",
-    explanation:"XはS（音楽家）とP（天才）の差集合S∖Pに存在する音楽家を示します。Xは白い領域に置きます。",
-    relation:"overlap", subjectCircle:{cx:245,cy:180,r:108}, predicateCircle:{cx:365,cy:180,r:108},
-    existence:{x:192,y:180}, subjectLabel:{x:192,y:125}, predicateLabel:{x:418,y:125}
-  },
-  "o-student-female": {
-    form:"O", title:"特称否定命題 SoP", sentence:"ある学生は女子学生でない", formula:"SoP",
-    explanation:"P（女子学生）がS（学生）に含まれる例です。Pの円は白く保ち、Xは差集合S∖Pの白い部分に置きます。",
-    relation:"predicate-inside-subject", subjectCircle:{cx:310,cy:180,r:132}, predicateCircle:{cx:350,cy:180,r:68},
-    existence:{x:225,y:180}, subjectLabel:{x:205,y:105}, predicateLabel:{x:350,y:132}
+  "three-term": {
+    title:"S・M・Pの標準配置", viewBox:"0 0 620 400",
+    circles:[
+      {id:"S",cx:250,cy:165,r:110,label:{x:205,y:90}},
+      {id:"M",cx:370,cy:165,r:110,label:{x:415,y:90}},
+      {id:"P",cx:310,cy:270,r:110,label:{x:310,y:360}}
+    ],
+    regions:[
+      {id:"outside",title:"円の外",inside:[],outside:["S","M","P"],point:{x:310,y:25}},
+      {id:"s-only",title:"Sのみ",inside:["S"],outside:["M","P"],point:{x:190,y:165}},
+      {id:"m-only",title:"Mのみ",inside:["M"],outside:["S","P"],point:{x:430,y:165}},
+      {id:"p-only",title:"Pのみ",inside:["P"],outside:["S","M"],point:{x:310,y:355}},
+      {id:"s-m",title:"S∩M（Pを除く）",inside:["S","M"],outside:["P"],point:{x:310,y:80}},
+      {id:"s-p",title:"S∩P（Mを除く）",inside:["S","P"],outside:["M"],point:{x:235,y:240}},
+      {id:"m-p",title:"M∩P（Sを除く）",inside:["M","P"],outside:["S"],point:{x:385,y:240}},
+      {id:"s-m-p",title:"S∩M∩P",inside:["S","M","P"],outside:[],point:{x:310,y:180}}
+    ]
   }
 };
 
-const defaultEulerPattern = {A:"a-human-animal", E:"e-turtle-rabbit", I:"i-musician-genius", O:"o-musician-genius"};
+const eulerStates = new Map(
+  Object.keys(eulerLayouts).map(id => [id, {shaded:new Set(), existence:new Set()}])
+);
 
-function updateEulerPattern(patternId) {
-  const pattern = eulerPatterns[patternId];
-  if (!pattern) return;
+function renderEulerEditor(layoutId) {
+  const layout = eulerLayouts[layoutId];
+  const state = eulerStates.get(layoutId);
+  if (!layout || !state) return;
   const svg = document.getElementById("euler-diagram");
   if (!svg) return;
-  const selector = document.getElementById("euler-pattern");
-  if (selector) selector.value = patternId;
-  document.getElementById("euler-statement").textContent = pattern.title;
-  document.getElementById("euler-example").textContent = pattern.sentence;
-  document.getElementById("euler-formula").textContent = pattern.formula;
-  document.getElementById("euler-explanation").textContent = pattern.explanation;
+  document.getElementById("euler-layout").value = layoutId;
+  const [,,width,height] = layout.viewBox.split(" ").map(Number);
+  const circleMasks = layout.circles.map(circle =>
+    `<mask id="euler-circle-${layoutId}-${circle.id}" maskUnits="userSpaceOnUse" x="0" y="0" width="${width}" height="${height}"><circle cx="${circle.cx}" cy="${circle.cy}" r="${circle.r}" fill="white"/></mask>`
+  );
+  const masks = [...circleMasks];
+  const shading = layout.regions.filter(region => state.shaded.has(region.id)).map(region => {
+    const maskId = `euler-shade-${layoutId}-${region.id}`;
+    const included = region.inside.reduce((content, id) =>
+      `<g mask="url(#euler-circle-${layoutId}-${id})">${content}</g>`,
+    `<rect width="${width}" height="${height}" fill="white"/>`);
+    const excluded = region.outside.map(id => {
+      const circle = layout.circles.find(item => item.id === id);
+      return `<circle cx="${circle.cx}" cy="${circle.cy}" r="${circle.r}" fill="black"/>`;
+    }).join("");
+    masks.push(`<mask id="${maskId}" maskUnits="userSpaceOnUse" x="0" y="0" width="${width}" height="${height}">${included}${excluded}</mask>`);
+    return `<rect class="euler-highlight" width="${width}" height="${height}" mask="url(#${maskId})"/>`;
+  }).join("");
+  const outlines = layout.circles.map(circle =>
+    `<circle class="euler-boundary" cx="${circle.cx}" cy="${circle.cy}" r="${circle.r}"/>`
+  ).join("");
+  const labels = layout.circles.map(circle =>
+    `<text class="euler-term-label" x="${circle.label.x}" y="${circle.label.y}">${circle.id}</text>`
+  ).join("");
+  const markers = layout.regions.filter(region => state.existence.has(region.id)).map(region =>
+    `<text class="euler-existence" x="${region.point.x}" y="${region.point.y}" aria-label="${region.title}に要素が少なくとも1つある">×</text>`
+  ).join("");
+  svg.setAttribute("viewBox", layout.viewBox);
+  svg.setAttribute("aria-label", `${layout.title}の集合図`);
+  svg.innerHTML = `<defs>${masks.join("")}</defs>${shading}${outlines}${labels}${markers}`;
 
-  const s = pattern.subjectCircle;
-  const p = pattern.predicateCircle;
-  let highlight = "";
-  if (pattern.shade === "subject-only") {
-    highlight = `<defs><mask id="subject-only-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="620" height="330"><rect width="620" height="330" fill="black"/><circle cx="${s.cx}" cy="${s.cy}" r="${s.r}" fill="white"/><circle cx="${p.cx}" cy="${p.cy}" r="${p.r}" fill="black"/></mask></defs><rect class="euler-highlight" width="620" height="330" mask="url(#subject-only-mask)"/>`;
-  } else if (pattern.shade === "whole-subject") {
-    highlight = `<circle class="euler-highlight" cx="${s.cx}" cy="${s.cy}" r="${s.r}"/>`;
-  } else if (pattern.shade === "intersection") {
-    highlight = `<defs><clipPath id="subject-clip"><circle cx="${s.cx}" cy="${s.cy}" r="${s.r}"/></clipPath></defs><g clip-path="url(#subject-clip)"><circle class="euler-highlight" cx="${p.cx}" cy="${p.cy}" r="${p.r}"/></g>`;
+  const regionList = document.getElementById("euler-regions");
+  regionList.replaceChildren();
+  layout.regions.forEach(region => {
+    const card = document.createElement("section");
+    card.className = "euler-region";
+    const heading = document.createElement("strong");
+    heading.className = "euler-region-title";
+    heading.textContent = region.title;
+    const actions = document.createElement("div");
+    actions.className = "euler-region-actions";
+    actions.append(
+      makeEulerToggle(layoutId, region, "shade", state.shaded.has(region.id)),
+      makeEulerToggle(layoutId, region, "existence", state.existence.has(region.id))
+    );
+    card.append(heading, actions);
+    regionList.append(card);
+  });
+  const shadedCount = state.shaded.size;
+  const existenceCount = state.existence.size;
+  document.getElementById("euler-status").textContent =
+    `${layout.title}：染色 ${shadedCount}領域、× ${existenceCount}領域。青く塗った領域には×を置けません。`;
+  document.getElementById("euler-reset").disabled = shadedCount === 0 && existenceCount === 0;
+}
+
+function makeEulerToggle(layoutId, region, action, active) {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "choice euler-toggle";
+  button.setAttribute("aria-pressed", String(active));
+  if (action === "shade") {
+    button.textContent = active ? "染色を解除" : "染色する";
+    button.setAttribute("aria-label", `${region.title}の染色を${active ? "解除" : "設定"}`);
+  } else {
+    button.textContent = active ? "×を消す" : "×を置く";
+    button.setAttribute("aria-label", `${region.title}に×を${active ? "消す" : "置く"}`);
+    button.disabled = !active && eulerStates.get(layoutId).shaded.has(region.id);
   }
-  const outline = pattern.relation === "equal"
-    ? `<circle class="euler-boundary" cx="${s.cx}" cy="${s.cy}" r="${s.r}"/><text class="euler-term-label" x="${s.cx}" y="${s.cy}">S＝P</text>`
-    : `<circle class="euler-boundary" cx="${s.cx}" cy="${s.cy}" r="${s.r}"/><circle class="euler-boundary" cx="${p.cx}" cy="${p.cy}" r="${p.r}"/><text class="euler-term-label" x="${pattern.subjectLabel.x}" y="${pattern.subjectLabel.y}">S</text><text class="euler-term-label" x="${pattern.predicateLabel.x}" y="${pattern.predicateLabel.y}">P</text>`;
-  const marker = pattern.existence
-    ? `<text class="euler-existence" x="${pattern.existence.x}" y="${pattern.existence.y}" aria-label="この領域に要素が少なくとも1つある">×</text>`
-    : "";
-  svg.setAttribute("aria-label", `${pattern.formula}。${pattern.sentence}。`);
-  svg.innerHTML = `<text class="euler-formula-label" x="310" y="28">${pattern.formula}</text>${highlight}${outline}${marker}`;
-  setActiveTerm(pattern.form);
-  return pattern;
+  button.addEventListener("click", () => {
+    const state = eulerStates.get(layoutId);
+    const values = action === "shade" ? state.shaded : state.existence;
+    if (action === "existence" && !active && state.shaded.has(region.id)) {
+      document.getElementById("euler-status").textContent = "染色された領域は空なので、×を置けません。先に染色を解除してください。";
+      return;
+    }
+    if (action === "shade" && !active && state.existence.has(region.id)) {
+      document.getElementById("euler-status").textContent = "×がある領域は空にできません。先に×を消してください。";
+      return;
+    }
+    if (values.has(region.id)) values.delete(region.id);
+    else values.add(region.id);
+    renderEulerEditor(layoutId);
+  });
+  return button;
 }
 
 function showEulerTerm(termId) {
-  const patternForTerm = {
-    A:"a-human-animal",
-    E:"e-turtle-rabbit",
-    I:"i-musician-genius",
-    O:"o-musician-genius",
-    universal:"a-human-animal",
-    particular:"i-musician-genius",
-    SaP:"a-human-animal",
-    SeP:"e-turtle-rabbit",
-    SiP:"i-musician-genius",
-    SoP:"o-musician-genius"
-  };
-  if (patternForTerm[termId]) updateEulerPattern(patternForTerm[termId]);
+  const layoutForTerm = {A:"overlap",E:"disjoint",I:"overlap",O:"overlap",universal:"overlap",particular:"overlap",SaP:"subject-inside-predicate",SeP:"disjoint",SiP:"overlap",SoP:"overlap"};
+  if (layoutForTerm[termId]) renderEulerEditor(layoutForTerm[termId]);
 }
 
 const relations = {
@@ -295,18 +381,18 @@ function activateTerm(termId) {
 }
 
 function setupEuler() {
-  const selector = document.getElementById("euler-pattern");
+  const selector = document.getElementById("euler-layout");
   if (!selector) return;
   selector.addEventListener("change", () => {
-    const pattern = updateEulerPattern(selector.value);
-    document.getElementById("dictionary-popup").textContent =
-      `${pattern.formula}。${pattern.sentence}`;
+    renderEulerEditor(selector.value);
   });
-  const initial = updateEulerPattern(selector.value);
-  const requestedTerm = new URLSearchParams(window.location.search).get("term");
-  const termPattern = {A:"a-human-animal",E:"e-turtle-rabbit",I:"i-musician-genius",O:"o-musician-genius",universal:"a-human-animal",particular:"i-musician-genius",SaP:"a-human-animal",SeP:"e-turtle-rabbit",SiP:"i-musician-genius",SoP:"o-musician-genius"};
-  if (termPattern[requestedTerm]) updateEulerPattern(termPattern[requestedTerm]);
-  if (initial && !requestedTerm) selector.value = "a-human-animal";
+  document.getElementById("euler-reset").addEventListener("click", () => {
+    const state = eulerStates.get(selector.value);
+    state.shaded.clear();
+    state.existence.clear();
+    renderEulerEditor(selector.value);
+  });
+  renderEulerEditor(selector.value);
 }
 
 function setupOpposition() {

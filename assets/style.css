@@ -9,7 +9,7 @@
   --border: #dce3ee;
 }
 * { box-sizing: border-box; }
-body { margin: 0; min-width: 320px; }
+body { margin: 0; }
 button { font: inherit; }
 a { color: inherit; }
 .page { width: min(1200px, calc(100% - 32px)); margin: 0 auto; padding: 28px 0 44px; }
@@ -56,7 +56,17 @@ button.dict-item { cursor: pointer; }
 .euler-highlight { fill: #b9d0ff; }
 .euler-existence { fill: #1d2939; font-size: 30px; font-weight: 700; text-anchor: middle; dominant-baseline: central; }
 .euler-term-label { fill: #1d2939; font-size: 20px; font-weight: 700; text-anchor: middle; dominant-baseline: central; }
-.euler-formula-label { fill: #163f99; font-family: ui-monospace, Consolas, monospace; font-size: 22px; font-weight: 700; text-anchor: middle; }
+.editor-toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin: 4px 0 12px; }
+.editor-toolbar .hint { flex: 1 1 280px; margin: 0; }
+.editor-toolbar .choice { flex: 0 0 auto; }
+.euler-regions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+.euler-region { min-width: 0; padding: 11px; border: 1px solid var(--border); border-radius: 10px; background: #fbfcfe; }
+.euler-region-title { display: block; margin-bottom: 9px; font-size: .92rem; }
+.euler-region-actions { display: flex; flex-wrap: wrap; gap: 7px; }
+.euler-toggle { flex: 1 1 auto; padding: 7px 9px; font-size: .86rem; }
+.euler-toggle[aria-pressed="true"] { border-color: var(--blue); background: #edf3ff; color: #163f99; }
+.euler-toggle:disabled, #euler-reset:disabled { cursor: not-allowed; opacity: .55; }
+.editor-status { min-height: 1.6em; margin: 10px 0; color: #526174; font-size: .86rem; }
 .role-note { margin-top: 14px; padding: 14px 16px; border-left: 4px solid #8a9bb5; border-radius: 8px; background: #f7f9fc; line-height: 1.6; }
 .role-note p { margin: 6px 0 0; color: #526174; font-size: .9rem; }
 .table-wrap { overflow-x: auto; }
@@ -101,6 +111,9 @@ tbody tr.is-active td { background: #e8f0ff; }
   .layout { grid-template-columns: 1fr; }
   .dictionary-frame { position: static; }
   .dictionary { max-height: 360px; }
+}
+@media (max-width: 440px) {
+  .euler-regions { grid-template-columns: 1fr; }
 }
 @media (max-width: 520px) {
   .chapter { padding: 16px; }
