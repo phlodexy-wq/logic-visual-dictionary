@@ -17,8 +17,31 @@
     <div class="layout">
       <section class="chapter">
         <h1>① オイラー図：命題の集合関係</h1>
-        <p class="hint">基本図形を選び、領域ごとに染色（空）や×（存在）を自分で設定します。図の下の操作欄から、染色・×の切替ができます。</p>
-        <label class="pattern-select-label" for="euler-layout">基本図形</label>
+        <p class="hint">図に名前を付けて作成し、基本図形を選んでカスタムします。染色や×の変更は、このブラウザーに自動保存されます。</p>
+        <section class="card euler-workbooks" aria-labelledby="euler-workbooks-title">
+          <h2 id="euler-workbooks-title">図の作成・保存</h2>
+          <label class="pattern-select-label" for="euler-new-name">新しい図の名前</label>
+          <input class="pattern-select" id="euler-new-name" type="text" maxlength="80" placeholder="例：三段論法の練習 1">
+          <label class="pattern-select-label" for="euler-new-layout">最初の基本図形</label>
+          <select class="pattern-select" id="euler-new-layout">
+            <option value="overlap">2項：SとPが交差</option>
+            <option value="subject-inside-predicate">2項：SがPに含まれる</option>
+            <option value="predicate-inside-subject">2項：PがSに含まれる</option>
+            <option value="disjoint">2項：SとPが交わらない</option>
+            <option value="equal">2項：SとPが同じ</option>
+            <option value="three-term">3項：S・M・Pの標準配置</option>
+          </select>
+          <button class="choice euler-create-button" id="euler-create" type="button">名前を付けて作成</button>
+          <label class="pattern-select-label" for="euler-saved-list">保存した図を開く</label>
+          <select class="pattern-select" id="euler-saved-list" aria-label="保存した図"></select>
+          <div class="button-row euler-save-actions">
+            <button class="choice" id="euler-delete" type="button">この図を削除</button>
+            <button class="choice" id="euler-export" type="button">保存データを書き出す</button>
+            <label class="choice euler-import-label" for="euler-import">保存データを読み込む<input id="euler-import" type="file" accept="application/json,.json"></label>
+          </div>
+          <p class="hint euler-storage-note">データはこのページのURLとブラウザーごとに保存され、GitHubには自動で送られません。GitHubにも保管する場合はJSONを書き出して手動でアップロードしてください。</p>
+        </section>
+        <label class="pattern-select-label" for="euler-layout">この図の基本図形</label>
         <select class="pattern-select" id="euler-layout">
           <option value="overlap">2項：SとPが交差</option>
           <option value="subject-inside-predicate">2項：SがPに含まれる</option>
@@ -27,22 +50,26 @@
           <option value="equal">2項：SとPが同じ</option>
           <option value="three-term">3項：S・M・Pの標準配置</option>
         </select>
-        <svg id="euler-diagram" class="diagram euler-diagram" viewBox="0 0 620 330" role="img" aria-label="編集できる集合図"></svg>
+        <svg id="euler-diagram" class="diagram euler-diagram" viewBox="0 0 620 330" role="group" aria-describedby="euler-status" aria-label="編集できる集合図"></svg>
         <div class="editor-toolbar">
           <p class="hint">青く塗った領域には要素がありません。×は白い領域に要素があることを示します。</p>
-          <button class="choice" id="euler-reset" type="button">この図をリセット</button>
+          <button class="choice" id="euler-reset" type="button">この基本図形をリセット</button>
+        </div>
+        <div class="button-row euler-point-tools" role="group" aria-label="図上の×操作">
+          <button class="choice" id="euler-place-mode" type="button" aria-pressed="false">図をクリックして×を置く</button>
+          <button class="choice" id="euler-remove-mode" type="button" aria-pressed="false">図をクリックして×を消す</button>
         </div>
         <div class="euler-regions" id="euler-regions" aria-label="領域ごとの染色と存在記号の操作"></div>
         <p class="editor-status" id="euler-status" aria-live="polite"></p>
         <div class="card categorical-card">
           <strong>使い方</strong>
-          <p class="hint categorical-description">各領域の「染色する」で空の領域にし、「×を置く」で存在を表します。図形を切り替えても、それぞれの図の編集内容はこのページを開いている間保持されます。</p>
+          <p class="hint categorical-description">各領域のボタンで染色を切り替えます。「図をクリックして×を置く」を選ぶと、境界線上を含め、図の任意の位置に×を置けます。図形を切り替えても編集内容は名前付きの図に保存されます。</p>
         </div>
         <aside class="role-note">
           <strong>S・M・Pは推論内での役割記号</strong>
           <p>S（結論の主語項）・P（結論の述語項）・M（媒概念）は、三段論法の中で項が担う役割を表します。円や具体的な集合名と同じものではなく、推論の前提・結論に応じて対応が決まります。</p>
         </aside>
-        <footer class="site-footer">青い領域は空、×はその領域に要素が少なくとも1つ存在することを示します。操作はこのページを開いている間保持されます。</footer>
+        <footer class="site-footer">青い領域は空、×はその領域に要素が少なくとも1つ存在することを示します。図はブラウザー内に保存され、JSONで書き出すこともできます。</footer>
       </section>
       <aside class="card dictionary-frame" data-dictionary-frame aria-label="用語辞書"></aside>
     </div>

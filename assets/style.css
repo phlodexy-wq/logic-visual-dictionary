@@ -54,8 +54,18 @@ button.dict-item { cursor: pointer; }
 .euler-diagram { height: auto; margin-top: 6px; overflow: visible; }
 .euler-boundary { fill: none; stroke: #344054; stroke-width: 2.5; }
 .euler-highlight { fill: #b9d0ff; }
-.euler-existence { fill: #1d2939; font-size: 30px; font-weight: 700; text-anchor: middle; dominant-baseline: central; }
+.euler-existence { fill: #1d2939; stroke: #fff; stroke-width: 3px; paint-order: stroke; font-size: 30px; font-weight: 700; text-anchor: middle; dominant-baseline: central; pointer-events: none; }
 .euler-term-label { fill: #1d2939; font-size: 20px; font-weight: 700; text-anchor: middle; dominant-baseline: central; }
+.euler-place-active { cursor: crosshair; }
+.euler-remove-active { cursor: pointer; }
+.euler-workbooks { margin: 16px 0; padding: 14px; }
+.euler-workbooks h2 { margin-bottom: 8px; }
+.euler-create-button { width: 100%; margin-top: 10px; }
+.euler-save-actions { margin: 10px 0 4px; }
+.euler-import-label { display: inline-flex; align-items: center; cursor: pointer; }
+.euler-import-label input { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
+.euler-import-label:focus-within { outline: 2px solid var(--blue); outline-offset: 2px; }
+.euler-storage-note { margin: 8px 0 0; font-size: .82rem; }
 .editor-toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin: 4px 0 12px; }
 .editor-toolbar .hint { flex: 1 1 280px; margin: 0; }
 .editor-toolbar .choice { flex: 0 0 auto; }
