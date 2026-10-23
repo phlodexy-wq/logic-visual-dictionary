@@ -48,17 +48,15 @@ button.dict-item { cursor: pointer; }
 .button-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
 .choice, .relation-choice { padding: 8px 13px; border: 1px solid #c7d2e2; border-radius: 9px; background: #fff; color: #344054; cursor: pointer; }
 .choice[aria-pressed="true"], .relation-choice[aria-pressed="true"] { border-color: var(--blue); background: #edf3ff; color: #163f99; }
-.pattern-picker { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 12px 0 16px; }
-.pattern-choice { min-height: 42px; padding: 8px 10px; border: 1px solid #c7d2e2; border-radius: 9px; background: #fff; color: #344054; text-align: left; cursor: pointer; }
-.pattern-choice[aria-pressed="true"] { border-color: var(--blue); background: #edf3ff; color: #163f99; }
-.term-labels { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 0 0 10px; }
-.term-labels > div { min-width: 0; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; background: #f8fafc; }
-.term-labels dt { color: #667085; font-size: .82rem; }
-.term-labels dd { margin: 3px 0 0; font-weight: 700; }
-.euler-diagram { min-height: 200px; }
+.pattern-select-label { display: block; margin: 12px 0 5px; color: #526174; font-size: .86rem; }
+.pattern-select { width: 100%; min-height: 42px; padding: 8px 34px 8px 11px; border: 1px solid #c7d2e2; border-radius: 9px; background: #fff; color: #1d2939; font: inherit; }
+.formula-display { margin: 7px 0; color: #163f99; font-family: ui-monospace, Consolas, monospace; font-size: 1.25rem; font-weight: 700; letter-spacing: .04em; }
+.euler-diagram { min-height: 180px; margin-top: 6px; }
 .euler-boundary { fill: none; stroke: #344054; stroke-width: 2.5; }
 .euler-highlight { fill: #b9d0ff; }
 .euler-existence { fill: #1d2939; font-size: 30px; font-weight: 700; text-anchor: middle; dominant-baseline: central; }
+.euler-term-label { fill: #1d2939; font-size: 20px; font-weight: 700; text-anchor: middle; dominant-baseline: central; }
+.euler-formula-label { fill: #163f99; font-family: ui-monospace, Consolas, monospace; font-size: 22px; font-weight: 700; text-anchor: middle; }
 .role-note { margin-top: 14px; padding: 14px 16px; border-left: 4px solid #8a9bb5; border-radius: 8px; background: #f7f9fc; line-height: 1.6; }
 .role-note p { margin: 6px 0 0; color: #526174; font-size: .9rem; }
 .table-wrap { overflow-x: auto; }
@@ -106,7 +104,7 @@ tbody tr.is-active td { background: #e8f0ff; }
 }
 @media (max-width: 520px) {
   .chapter { padding: 16px; }
-  .chapter-links, .dictionary-list, .tableau, .pattern-picker { grid-template-columns: 1fr; }
+  .chapter-links, .dictionary-list, .tableau { grid-template-columns: 1fr; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
