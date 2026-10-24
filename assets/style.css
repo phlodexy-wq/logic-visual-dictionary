@@ -64,6 +64,7 @@ button.dict-item { cursor: pointer; }
 .euler-workbooks { margin: 8px 0 12px; padding: 12px 14px; }
 .euler-create-button { width: 100%; margin-top: 10px; }
 .euler-save-actions { margin: 10px 0 4px; }
+.euler-conflict-notice:not([hidden]) { position: fixed; z-index: 20; right: 12px; bottom: 12px; max-width: min(520px, calc(100vw - 24px)); margin: 0; padding: 9px 13px; border: 1px solid #f0a6a6; border-radius: 9px; background: #fff1f1; box-shadow: 0 4px 16px #34405426; color: #b42318; font-size: .86rem; font-weight: 700; line-height: 1.45; pointer-events: none; }
 .euler-import-label { display: inline-flex; align-items: center; cursor: pointer; }
 .euler-import-label input { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
 .euler-import-label:focus-within { outline: 2px solid var(--blue); outline-offset: 2px; }
@@ -88,7 +89,7 @@ button.dict-item { cursor: pointer; }
 .editor-toolbar .choice { flex: 0 0 auto; }
 .euler-point-tools { gap: 6px; }
 .euler-point-tools .choice { min-width: 44px; padding: 7px 11px; }
-.euler-point-tools .choice:disabled, #euler-reset:disabled { cursor: not-allowed; opacity: .55; }
+.euler-point-tools .choice:disabled, #euler-reset:disabled, #euler-export:disabled { cursor: not-allowed; opacity: .55; }
 .editor-status { min-height: 1.6em; margin: 10px 0; color: #526174; font-size: .86rem; }
 .role-note { margin-top: 14px; padding: 14px 16px; border-left: 4px solid #8a9bb5; border-radius: 8px; background: #f7f9fc; line-height: 1.6; }
 .role-note p { margin: 6px 0 0; color: #526174; font-size: .9rem; }

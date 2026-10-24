@@ -198,13 +198,17 @@ const eulerLayouts = {
 
 const eulerStorageKey = "logic-visual-dictionary.euler-diagrams.v1";
 let eulerDiagrams = [];
-let activeEulerDiagramId = null;
+let activeEulerLocalId = null;
 let eulerPointMode = "none";
 let eulerStorageError = "";
 let eulerViewingMode = true;
 
 function getActiveEulerDiagram() {
-  return eulerDiagrams.find(diagram => diagram.id === activeEulerDiagramId) || null;
+  return eulerDiagrams.find(diagram => diagram.localId === activeEulerLocalId) || null;
+}
+
+function createEulerLocalId() {
+  return `local-${Date.now()}-${Math.random().toString(36).slice(2,10)}`;
 }
 
 function getEulerState(diagram, layoutId) {
@@ -239,6 +243,18 @@ function serializeEulerDiagram(diagram) {
       }
     ]))
   };
+}
+
+function getEulerDiagramContentKey(diagram) {
+  const serialized = serializeEulerDiagram(diagram);
+  serialized.states = Object.fromEntries(Object.entries(serialized.states)
+    .sort(([first],[second]) => first.localeCompare(second))
+    .map(([layoutId,state]) => [layoutId,{
+      shaded:[...state.shaded].sort(),
+      markers:[...state.markers].sort((first,second) => first.x-second.x || first.y-second.y),
+      labels:Object.fromEntries(Object.entries(state.labels).sort(([first],[second]) => first.localeCompare(second)))
+    }]));
+  return `${diagram.id}:${JSON.stringify(serialized)}`;
 }
 
 function parseEulerDiagram(value) {
@@ -291,6 +307,7 @@ function parseEulerDiagram(value) {
   }
   return {
     id:value.id,
+    localId:typeof value.localId === "string" ? value.localId : createEulerLocalId(),
     name:value.name.trim(),
     sentence:typeof value.sentence === "string" ? value.sentence.slice(0,500) : "",
     description:typeof value.description === "string" ? value.description.slice(0,2000) : "",
@@ -312,24 +329,28 @@ function readEulerDiagrams() {
       throw new Error("保存データの形式またはバージョンが正しくありません。");
     }
     eulerDiagrams = saved.diagrams.map(parseEulerDiagram);
-    const names = new Set();
-    const ids = new Set();
+    const localIds = new Set();
     for (const diagram of eulerDiagrams) {
-      const key = diagram.name.toLocaleLowerCase("ja-JP");
-      if (names.has(key) || ids.has(diagram.id)) {
-        throw new Error("同じ名前またはIDの図が重複しています。保存データをJSONに書き出して確認してください。");
-      }
-      names.add(key);
-      ids.add(diagram.id);
+      if (localIds.has(diagram.localId)) diagram.localId = createEulerLocalId();
+      localIds.add(diagram.localId);
     }
-    if (eulerDiagrams.some(diagram => diagram.id === saved.activeId)) {
-      activeEulerDiagramId = saved.activeId;
+    const unique = new Set();
+    eulerDiagrams = eulerDiagrams.filter(diagram => {
+      const key = getEulerDiagramContentKey(diagram);
+      if (unique.has(key)) return false;
+      unique.add(key);
+      return true;
+    });
+    if (eulerDiagrams.some(diagram => diagram.localId === saved.activeId)) {
+      activeEulerLocalId = saved.activeId;
+    } else if (eulerDiagrams.some(diagram => diagram.id === saved.activeId)) {
+      activeEulerLocalId = eulerDiagrams.find(diagram => diagram.id === saved.activeId).localId;
     } else if (eulerDiagrams.length) {
-      activeEulerDiagramId = eulerDiagrams[0].id;
+      activeEulerLocalId = eulerDiagrams[0].localId;
     }
   } catch (error) {
     eulerDiagrams = [];
-    activeEulerDiagramId = null;
+    activeEulerLocalId = null;
     eulerStorageError = `保存データを読み込めませんでした。${error.message || error}`;
   }
 }
@@ -338,8 +359,8 @@ function persistEulerDiagrams() {
   try {
     localStorage.setItem(eulerStorageKey, JSON.stringify({
       version:1,
-      activeId:activeEulerDiagramId,
-      diagrams:eulerDiagrams.map(serializeEulerDiagram)
+      activeId:activeEulerLocalId,
+      diagrams:eulerDiagrams.map(diagram => ({...serializeEulerDiagram(diagram),localId:diagram.localId}))
     }));
     eulerStorageError = "";
     return true;
@@ -360,14 +381,41 @@ function renderEulerSavedList() {
   } else {
     eulerDiagrams.forEach(diagram => {
       const option = document.createElement("option");
-      option.value = diagram.id;
-      option.textContent = diagram.name;
+      const conflict = getEulerConflictKinds(diagram);
+      option.value = diagram.localId;
+      option.textContent = `${diagram.name}${conflict.id ? "（重複）" : ""}${conflict.name ? "（名前重複）" : ""}`;
+      if (conflict.id || conflict.name) option.style.color = "#b42318";
       selector.append(option);
     });
   }
-  selector.value = activeEulerDiagramId || "";
-  document.getElementById("euler-delete").disabled = !activeEulerDiagramId;
-  document.getElementById("euler-export").disabled = eulerDiagrams.length === 0;
+  selector.value = activeEulerLocalId || "";
+  document.getElementById("euler-delete").disabled = !activeEulerLocalId;
+  const conflictCount = getEulerConflicts().length;
+  const exportButton = document.getElementById("euler-export");
+  exportButton.disabled = eulerDiagrams.length === 0 || conflictCount > 0;
+  const notice = document.getElementById("euler-conflict-notice");
+  notice.hidden = conflictCount === 0;
+  notice.textContent = conflictCount
+    ? `重複が${conflictCount}件あります。図を削除または改名すると書き出せます。`
+    : "";
+}
+
+function getEulerConflictKinds(diagram) {
+  const sameId = eulerDiagrams.filter(item => item.id === diagram.id);
+  const sameName = eulerDiagrams.filter(item =>
+    item.name.toLocaleLowerCase("ja-JP") === diagram.name.toLocaleLowerCase("ja-JP")
+  );
+  return {id:sameId.length > 1,name:sameName.length > 1};
+}
+
+function getEulerConflicts() {
+  const conflicts = new Set();
+  for (const diagram of eulerDiagrams) {
+    const conflict = getEulerConflictKinds(diagram);
+    if (conflict.id) conflicts.add(`id:${diagram.id}`);
+    if (conflict.name) conflicts.add(`name:${diagram.name.toLocaleLowerCase("ja-JP")}`);
+  }
+  return [...conflicts];
 }
 
 function snapPointToBoundary(layout, point) {
@@ -641,13 +689,13 @@ function createEulerDiagram() {
     nameInput.select();
     return;
   }
-  const diagram = {id:createEulerDiagramId(),name,sentence:"",description:"",layoutId,states:new Map()};
+  const diagram = {id:createEulerDiagramId(),localId:createEulerLocalId(),name,sentence:"",description:"",layoutId,states:new Map()};
   eulerDiagrams.push(diagram);
-  activeEulerDiagramId = diagram.id;
+  activeEulerLocalId = diagram.localId;
   getEulerState(diagram, layoutId);
   if (!persistEulerDiagrams()) {
-    eulerDiagrams = eulerDiagrams.filter(item => item.id !== diagram.id);
-    activeEulerDiagramId = eulerDiagrams[0]?.id || null;
+    eulerDiagrams = eulerDiagrams.filter(item => item.localId !== diagram.localId);
+    activeEulerLocalId = eulerDiagrams[0]?.localId || null;
     renderEulerEditor(getActiveEulerDiagram()?.layoutId);
     return;
   }
@@ -659,6 +707,11 @@ function createEulerDiagram() {
 function exportEulerDiagrams() {
   if (!eulerDiagrams.length) {
     setEulerStatus("書き出す図がありません。");
+    return;
+  }
+  if (getEulerConflicts().length) {
+    setEulerStatus("重複を解決してから書き出してください。");
+    renderEulerSavedList();
     return;
   }
   try {
@@ -689,29 +742,37 @@ function importEulerDiagrams(file) {
       if (!imported || imported.version !== 1 || !Array.isArray(imported.diagrams)) {
         throw new Error("このアプリの保存JSON（version 1）ではありません。");
       }
-      const diagrams = imported.diagrams.map(parseEulerDiagram);
-      const names = new Set(eulerDiagrams.map(diagram => diagram.name.toLocaleLowerCase("ja-JP")));
-      const ids = new Set(eulerDiagrams.map(diagram => diagram.id));
-      for (const diagram of diagrams) {
-        const key = diagram.name.toLocaleLowerCase("ja-JP");
-        if (names.has(key) || ids.has(diagram.id)) {
-          throw new Error(`「${diagram.name}」は既に存在します。重複しない名前のデータを読み込んでください。`);
-        }
-        names.add(key);
-        ids.add(diagram.id);
-      }
+      const diagrams = imported.diagrams.map(value => ({
+        ...parseEulerDiagram(value),
+        localId:createEulerLocalId()
+      }));
       const previousDiagrams = eulerDiagrams;
-      const previousActiveId = activeEulerDiagramId;
-      eulerDiagrams = [...eulerDiagrams,...diagrams];
-      if (!activeEulerDiagramId && diagrams.length) activeEulerDiagramId = diagrams[0].id;
+      const previousActiveId = activeEulerLocalId;
+      const existingContents = new Set(eulerDiagrams.map(diagram =>
+        getEulerDiagramContentKey(diagram)
+      ));
+      const additions = [];
+      let skipped = 0;
+      for (const diagram of diagrams) {
+        const key = getEulerDiagramContentKey(diagram);
+        if (existingContents.has(key)) {
+          skipped += 1;
+          continue;
+        }
+        additions.push(diagram);
+        existingContents.add(key);
+      }
+      eulerDiagrams = [...eulerDiagrams,...additions];
+      if (!activeEulerLocalId && additions.length) activeEulerLocalId = additions[0].localId;
       if (!persistEulerDiagrams()) {
         eulerDiagrams = previousDiagrams;
-        activeEulerDiagramId = previousActiveId;
+        activeEulerLocalId = previousActiveId;
         renderEulerEditor(getActiveEulerDiagram()?.layoutId);
         return;
       }
       renderEulerEditor(getActiveEulerDiagram()?.layoutId);
-      setEulerStatus(`${diagrams.length}件の図を読み込み、ブラウザーに保存しました。`);
+      const conflictCount = getEulerConflicts().length;
+      setEulerStatus(`${additions.length}件を追加、${skipped}件をスキップしました。${conflictCount ? `重複が${conflictCount}件あります。` : ""}`);
     } catch (error) {
       setEulerStatus(`読み込みに失敗しました。${error.message || error}`);
     }
@@ -853,7 +914,7 @@ function setupEuler() {
       setEulerStatus("名前を入力してください。");
       return;
     }
-    if (eulerDiagrams.some(item => item.id !== diagram.id &&
+    if (eulerDiagrams.some(item => item.localId !== diagram.localId &&
         item.name.toLocaleLowerCase("ja-JP") === name.toLocaleLowerCase("ja-JP"))) {
       event.currentTarget.value = diagram.name;
       setEulerStatus("同じ名前の図があります。");
@@ -864,7 +925,7 @@ function setupEuler() {
     renderEulerEditor(diagram.layoutId);
   });
   document.getElementById("euler-saved-list").addEventListener("change", event => {
-    activeEulerDiagramId = event.currentTarget.value || null;
+    activeEulerLocalId = event.currentTarget.value || null;
     eulerPointMode = "none";
     persistEulerDiagrams();
     renderEulerEditor(getActiveEulerDiagram()?.layoutId);
@@ -872,8 +933,8 @@ function setupEuler() {
   document.getElementById("euler-delete").addEventListener("click", () => {
     const diagram = getActiveEulerDiagram();
     if (!diagram || !window.confirm(`「${diagram.name}」を削除しますか？`)) return;
-    eulerDiagrams = eulerDiagrams.filter(item => item.id !== diagram.id);
-    activeEulerDiagramId = eulerDiagrams[0]?.id || null;
+    eulerDiagrams = eulerDiagrams.filter(item => item.localId !== diagram.localId);
+    activeEulerLocalId = eulerDiagrams[0]?.localId || null;
     persistEulerDiagrams();
     renderEulerEditor(getActiveEulerDiagram()?.layoutId);
   });
@@ -909,7 +970,7 @@ function setupEuler() {
     setEulerStatus(eulerViewingMode ? "閲覧モード：図と例文を表示しています。" : "編集モードに戻りました。");
   });
   document.getElementById("euler-diagram").addEventListener("click", handleEulerDiagramClick);
-  if (eulerDiagrams.length && !activeEulerDiagramId) activeEulerDiagramId = eulerDiagrams[0].id;
+  if (eulerDiagrams.length && !activeEulerLocalId) activeEulerLocalId = eulerDiagrams[0].localId;
   renderEulerEditor(getActiveEulerDiagram()?.layoutId);
 }
 
