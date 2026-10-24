@@ -1,0 +1,193 @@
+{
+  "version": 1,
+  "diagrams": [
+    {
+      "id": "diagram-1792765111661-z1br06d1",
+      "name": "A-1全称肯定命題SaP",
+      "sentence": "全ての人間は動物である",
+      "description": "",
+      "layoutId": "subject-inside-predicate",
+      "states": {
+        "overlap": {
+          "shaded": [
+            "intersection"
+          ],
+          "markers": [],
+          "labels": {
+            "S": {
+              "x": 192,
+              "y": 125
+            },
+            "M": null,
+            "P": {
+              "x": 418,
+              "y": 125
+            }
+          }
+        },
+        "subject-inside-predicate": {
+          "shaded": [
+            "intersection"
+          ],
+          "markers": [],
+          "labels": {
+            "S": {
+              "x": 310,
+              "y": 180
+            },
+            "M": null,
+            "P": {
+              "x": 310,
+              "y": 75
+            }
+          }
+        },
+        "three-term": {
+          "shaded": [],
+          "markers": [],
+          "labels": {
+            "S": {
+              "x": 205,
+              "y": 90
+            },
+            "M": {
+              "x": 415,
+              "y": 90
+            },
+            "P": {
+              "x": 310,
+              "y": 360
+            }
+          }
+        },
+        "equal": {
+          "shaded": [],
+          "markers": [],
+          "labels": {
+            "S": {
+              "x": 310,
+              "y": 180
+            },
+            "M": null,
+            "P": {
+              "x": 310,
+              "y": 180
+            }
+          }
+        },
+        "disjoint": {
+          "shaded": [],
+          "markers": [],
+          "labels": {
+            "S": {
+              "x": 185,
+              "y": 180
+            },
+            "M": null,
+            "P": {
+              "x": 435,
+              "y": 180
+            }
+          }
+        },
+        "predicate-inside-subject": {
+          "shaded": [],
+          "markers": [],
+          "labels": {
+            "S": {
+              "x": 215,
+              "y": 105
+            },
+            "M": null,
+            "P": {
+              "x": 350,
+              "y": 180
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "diagram-1792795143568-kds3ggql",
+      "name": "A-2全称肯定命題SaP",
+      "sentence": "すべての等辺三角形は等角三角形である",
+      "description": "",
+      "layoutId": "equal",
+      "states": {
+        "overlap": {
+          "shaded": [],
+          "markers": [],
+          "labels": {
+            "S": {
+              "x": 192,
+              "y": 125
+            },
+            "M": null,
+            "P": {
+              "x": 418,
+              "y": 125
+            }
+          }
+        },
+        "equal": {
+          "shaded": [
+            "intersection"
+          ],
+          "markers": [],
+          "labels": {
+            "S": {
+              "x": 290.421875,
+              "y": 178.109375
+            },
+            "M": null,
+            "P": {
+              "x": 320.421875,
+              "y": 177.109375
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "diagram-1792795346560-jmp7ovmb",
+      "name": "全称否定命題SeP",
+      "sentence": "すべてのカメはウサギでない",
+      "description": "",
+      "layoutId": "disjoint",
+      "states": {
+        "overlap": {
+          "shaded": [],
+          "markers": [],
+          "labels": {
+            "S": {
+              "x": 192,
+              "y": 125
+            },
+            "M": null,
+            "P": {
+              "x": 418,
+              "y": 125
+            }
+          }
+        },
+        "disjoint": {
+          "shaded": [
+            "s-only"
+          ],
+          "markers": [],
+          "labels": {
+            "S": {
+              "x": 185,
+              "y": 180
+            },
+            "M": null,
+            "P": {
+              "x": 435,
+              "y": 180
+            }
+          }
+        }
+      }
+    }
+  ]
+}
