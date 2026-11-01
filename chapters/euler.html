@@ -60,8 +60,19 @@
             <option value="predicate-inside-subject">P⊂S</option>
             <option value="disjoint">分離</option>
             <option value="equal">同じ</option>
-            <option value="three-term">S・M・P</option>
+            <option value="three-term">S・M・P（標準）</option>
+            <optgroup label="定言三段論法の格">
+              <option value="figure-1">第1格（M–P／S–M）</option>
+              <option value="figure-2">第2格（P–M／S–M）</option>
+              <option value="figure-3">第3格（M–P／M–S）</option>
+              <option value="figure-4">第4格（P–M／M–S）</option>
+            </optgroup>
           </select>
+        </div>
+        <div class="euler-figure-info" id="euler-figure-info" hidden aria-live="polite">
+          <strong id="euler-figure-title"></strong>
+          <span id="euler-figure-major"></span>
+          <span id="euler-figure-minor"></span>
         </div>
         <svg id="euler-diagram" class="diagram euler-diagram" viewBox="0 0 620 330" role="group" aria-describedby="euler-status" aria-label="編集できる集合図"></svg>
         <div class="editor-toolbar" data-edit-only>

@@ -115,6 +115,34 @@ function setActiveTerm(term) {
   });
 }
 
+function createThreeTermLayout(title = "S・M・Pの標準配置") {
+  return {
+    title, viewBox:"0 0 620 400",
+    circles:[
+      {id:"S",cx:250,cy:165,r:110,label:{x:205,y:90}},
+      {id:"M",cx:370,cy:165,r:110,label:{x:415,y:90}},
+      {id:"P",cx:310,cy:270,r:110,label:{x:310,y:360}}
+    ],
+    regions:[
+      {id:"outside",title:"円の外",inside:[],outside:["S","M","P"],point:{x:310,y:25}},
+      {id:"s-only",title:"Sのみ",inside:["S"],outside:["M","P"],point:{x:190,y:165}},
+      {id:"m-only",title:"Mのみ",inside:["M"],outside:["S","P"],point:{x:430,y:165}},
+      {id:"p-only",title:"Pのみ",inside:["P"],outside:["S","M"],point:{x:310,y:355}},
+      {id:"s-m",title:"S∩M（Pを除く）",inside:["S","M"],outside:["P"],point:{x:310,y:80}},
+      {id:"s-p",title:"S∩P（Mを除く）",inside:["S","P"],outside:["M"],point:{x:235,y:240}},
+      {id:"m-p",title:"M∩P（Sを除く）",inside:["M","P"],outside:["S"],point:{x:385,y:240}},
+      {id:"s-m-p",title:"S∩M∩P",inside:["S","M","P"],outside:[],point:{x:310,y:180}}
+    ]
+  };
+}
+
+function createSyllogismFigureLayout(number, major, minor) {
+  return {
+    ...createThreeTermLayout(`定言三段論法・第${number}格`),
+    figure:{number,major,minor}
+  };
+}
+
 const eulerLayouts = {
   overlap: {
     title:"SとPが交差", viewBox:"0 0 620 330",
@@ -176,24 +204,11 @@ const eulerLayouts = {
       {id:"intersection",title:"共通部分（S∩P＝S＝P）",inside:["S","P"],outside:[],point:{x:310,y:180}}
     ]
   },
-  "three-term": {
-    title:"S・M・Pの標準配置", viewBox:"0 0 620 400",
-    circles:[
-      {id:"S",cx:250,cy:165,r:110,label:{x:205,y:90}},
-      {id:"M",cx:370,cy:165,r:110,label:{x:415,y:90}},
-      {id:"P",cx:310,cy:270,r:110,label:{x:310,y:360}}
-    ],
-    regions:[
-      {id:"outside",title:"円の外",inside:[],outside:["S","M","P"],point:{x:310,y:25}},
-      {id:"s-only",title:"Sのみ",inside:["S"],outside:["M","P"],point:{x:190,y:165}},
-      {id:"m-only",title:"Mのみ",inside:["M"],outside:["S","P"],point:{x:430,y:165}},
-      {id:"p-only",title:"Pのみ",inside:["P"],outside:["S","M"],point:{x:310,y:355}},
-      {id:"s-m",title:"S∩M（Pを除く）",inside:["S","M"],outside:["P"],point:{x:310,y:80}},
-      {id:"s-p",title:"S∩P（Mを除く）",inside:["S","P"],outside:["M"],point:{x:235,y:240}},
-      {id:"m-p",title:"M∩P（Sを除く）",inside:["M","P"],outside:["S"],point:{x:385,y:240}},
-      {id:"s-m-p",title:"S∩M∩P",inside:["S","M","P"],outside:[],point:{x:310,y:180}}
-    ]
-  }
+  "three-term": createThreeTermLayout(),
+  "figure-1": createSyllogismFigureLayout(1,"M–P","S–M"),
+  "figure-2": createSyllogismFigureLayout(2,"P–M","S–M"),
+  "figure-3": createSyllogismFigureLayout(3,"M–P","M–S"),
+  "figure-4": createSyllogismFigureLayout(4,"P–M","M–S")
 };
 
 const eulerStorageKey = "logic-visual-dictionary.euler-diagrams.v1";
@@ -519,6 +534,14 @@ function renderEulerEditor(layoutId) {
   document.getElementById("euler-description-text").textContent = diagram.description;
   document.getElementById("euler-description-view").hidden = !diagram.description.trim();
   document.getElementById("euler-layout").value = selectedLayoutId;
+  const figureInfo = document.getElementById("euler-figure-info");
+  const figure = layout.figure;
+  figureInfo.hidden = !figure;
+  if (figure) {
+    document.getElementById("euler-figure-title").textContent = `第${figure.number}格`;
+    document.getElementById("euler-figure-major").textContent = `大前提 ${figure.major}`;
+    document.getElementById("euler-figure-minor").textContent = `小前提 ${figure.minor}`;
+  }
   document.getElementById("euler-saved-list").value = diagram.id;
   const [,,width,height] = layout.viewBox.split(" ").map(Number);
   const circleMasks = layout.circles.map(circle =>

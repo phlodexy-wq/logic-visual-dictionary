@@ -64,6 +64,8 @@ button.dict-item { cursor: pointer; }
 .euler-workbooks { margin: 8px 0 12px; padding: 12px 14px; }
 .euler-create-button { width: 100%; margin-top: 10px; }
 .euler-save-actions { margin: 10px 0 4px; }
+.euler-figure-info:not([hidden]) { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 8px 0; color: #526174; font-size: .9rem; }
+.euler-figure-info strong { color: #1d2939; }
 .euler-conflict-notice:not([hidden]) { position: fixed; z-index: 20; right: 12px; bottom: 12px; max-width: min(520px, calc(100vw - 24px)); margin: 0; padding: 9px 13px; border: 1px solid #f0a6a6; border-radius: 9px; background: #fff1f1; box-shadow: 0 4px 16px #34405426; color: #b42318; font-size: .86rem; font-weight: 700; line-height: 1.45; pointer-events: none; }
 .euler-import-label { display: inline-flex; align-items: center; cursor: pointer; }
 .euler-import-label input { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
